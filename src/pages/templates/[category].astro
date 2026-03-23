@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+
+function cleanSlug(id: string) {
+  return id.replace(/\.mdx?$/, '');
+}
+
+export async function getStaticPaths() {
+  const templates = await getCollection('templates');
+
+  const categories = [...new Set(
+    templates.map(t => t.data.category.toLowerCase())
+  )];
+
+  return categories.map(category => ({
+    params: { category }
+  }));
+}
+
+const { category } = Astro.params;
+
+const templates = await getCollection('templates');
+
+const filtered = templates.filter(
+  t => t.data.category.toLowerCase() === category
+);
+---
+
+<html>
+<head>
+  <title>Category: {category}</title>
+</head>
+
+<body>
+
+<nav>
+  <a href="/">Home</a>
+  <a href="/templates">Templates</a>
+</nav>
+
+<h1>Category: {category}</h1>
+
+<div>
+  {filtered.map(t => (
+    <div>
+      <a href={`/templates/${cleanSlug(t.id)}`}>
+        <h2>{t.data.title}</h2>
+      </a>
+      <p>{t.data.description}</p>
+      <p>€{t.data.price}</p>
+    </div>
+  ))}
+</div>
+
+</body>
+</html>
