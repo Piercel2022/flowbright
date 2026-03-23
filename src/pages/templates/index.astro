@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
+const cleanSlug = (id: string) => id.replace(/\.mdx?$/, '');
+
 let templates: CollectionEntry<'templates'>[] = [];
 try { templates = await getCollection('templates'); } catch {}
 
@@ -299,8 +301,8 @@ const placeholders = [
   <div class="templates-grid" id="grid">
 
     {sorted.length > 0
-      ? sorted.map(t => (
-          <a href={`/templates/${t.slug}`} class="template-card" data-cat={t.data.category}>
+  ? sorted.map(t => (
+      <a href={`/templates/${cleanSlug(t.id)}`} class="template-card" data-cat={t.data.category}>
             <div class={`cover cover-purple`}>
               <div class="cover-label">{t.data.category}</div>
               {t.data.featured && <div class="cover-featured">Featured</div>}
