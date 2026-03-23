@@ -1,11 +1,802 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const allTemplates = await getCollection('templates').catch(() => []);
+const featured = allTemplates.filter(t => t.data.featured).slice(0, 3);
+
+const posts = await getCollection('blog').catch(() => []);
+const recentPosts = posts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NotionFlow — Notion templates for agencies</title>
+  <meta name="description" content="Professional Notion templates built for digital agencies. Client portals, project OS, and team systems that actually get used."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #0f0e0d;
+      --ink-2:     #3d3b38;
+      --ink-3:     #7a7772;
+      --paper:     #faf9f7;
+      --paper-2:   #f0ede8;
+      --paper-3:   #e4e0d9;
+      --accent:    #5c4ee8;
+      --accent-2:  #ede9ff;
+      --accent-3:  #c8c0f8;
+      --teal:      #0d8a6a;
+      --teal-2:    #e0f5ee;
+      --amber:     #b86c10;
+      --amber-2:   #fef0da;
+      --serif:     'DM Serif Display', Georgia, serif;
+      --sans:      'DM Sans', system-ui, sans-serif;
+      --radius:    12px;
+      --radius-lg: 20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      height: 64px;
+      background: rgba(250, 249, 247, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 400;
+      color: var(--ink-2); text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: .5rem 1.25rem; border-radius: 8px;
+      font-weight: 500 !important;
+      transition: opacity .15s !important;
+    }
+    .nav-cta:hover { opacity: .88 !important; }
+
+    /* HERO */
+    .hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 8vw, 6rem);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+    }
+    @media (max-width: 768px) { .hero { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--accent-2); color: var(--accent);
+      font-size: .75rem; font-weight: 500; letter-spacing: .06em;
+      text-transform: uppercase; padding: .375rem .875rem;
+      border-radius: 100px; margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 3.75rem);
+      line-height: 1.08; letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title em {
+      font-style: italic; color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 1.0625rem; color: var(--ink-2);
+      line-height: 1.7; margin-bottom: 2.5rem;
+      max-width: 480px;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      padding: .875rem 2rem; border-radius: 10px;
+      font-size: .9375rem; font-weight: 500;
+      text-decoration: none; transition: opacity .15s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: .88; }
+    .btn-ghost {
+      color: var(--ink-2); font-size: .9375rem;
+      text-decoration: none; display: inline-flex;
+      align-items: center; gap: .375rem;
+      transition: color .15s;
+    }
+    .btn-ghost:hover { color: var(--accent); }
+
+    .hero-stats {
+      display: flex; gap: 2rem; margin-top: 3rem;
+      padding-top: 2rem; border-top: 1px solid var(--paper-3);
+    }
+    .stat-num {
+      font-family: var(--serif); font-size: 1.75rem;
+      color: var(--ink); line-height: 1;
+    }
+    .stat-label { font-size: .8125rem; color: var(--ink-3); margin-top: .25rem; }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+    }
+    .portal-card {
+      background: #fff;
+      border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,.06), 0 20px 40px -8px rgba(0,0,0,.1);
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    .card-topbar {
+      background: var(--paper); border-bottom: 1px solid var(--paper-3);
+      padding: .75rem 1rem; display: flex; align-items: center; gap: .5rem;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff6059; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28ca41; }
+    .card-url {
+      flex: 1; background: var(--paper-2);
+      border-radius: 6px; padding: .25rem .75rem;
+      font-size: .75rem; color: var(--ink-3);
+      font-family: monospace;
+    }
+    .card-body { padding: 1.25rem; }
+    .card-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; margin-bottom: 1rem;
+    }
+    .card-title { font-family: var(--serif); font-size: 1.0625rem; }
+    .card-badge {
+      font-size: .6875rem; font-weight: 500; padding: .25rem .625rem;
+      border-radius: 100px; background: var(--teal-2); color: var(--teal);
+    }
+    .mini-progress { margin-bottom: 1rem; }
+    .mini-progress-label {
+      display: flex; justify-content: space-between;
+      font-size: .75rem; color: var(--ink-3); margin-bottom: .375rem;
+    }
+    .progress-track {
+      height: 5px; background: var(--paper-2);
+      border-radius: 3px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px; background: var(--accent);
+      width: 60%;
+    }
+    .mini-tasks { display: flex; flex-direction: column; gap: .5rem; }
+    .mini-task {
+      display: flex; align-items: center; gap: .625rem;
+      font-size: .8125rem; color: var(--ink-2);
+    }
+    .task-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .td-done { background: var(--teal); }
+    .td-prog { background: var(--accent); }
+    .td-todo { background: var(--paper-3); }
+
+    .float-chip {
+      position: absolute; background: #fff;
+      border: 1px solid var(--paper-3); border-radius: 10px;
+      padding: .625rem .875rem; font-size: .8125rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+      display: flex; align-items: center; gap: .5rem;
+      font-weight: 500;
+      animation: float2 5s ease-in-out infinite;
+    }
+    @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+    .chip-1 { bottom: -1.5rem; left: -1.5rem; animation-delay: -2s; }
+    .chip-2 { top: 2rem; right: -1.5rem; animation-delay: -1s; }
+    .chip-dot-g { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
+    .chip-dot-p { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+    /* SECTION SHARED */
+    .section {
+      max-width: 1100px; margin: 0 auto;
+      padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+    }
+    .section-label {
+      font-size: .75rem; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(1.875rem, 4vw, 2.75rem);
+      line-height: 1.1; letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-size: 1.0625rem; color: var(--ink-2);
+      max-width: 560px; line-height: 1.7;
+    }
+    .section-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; flex-wrap: wrap; gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .link-arrow {
+      font-size: .9375rem; color: var(--accent);
+      text-decoration: none; display: inline-flex;
+      align-items: center; gap: .375rem; white-space: nowrap;
+      transition: gap .15s;
+    }
+    .link-arrow:hover { gap: .625rem; }
+
+    /* PROBLEM STRIP */
+    .problem-strip {
+      background: var(--ink); color: var(--paper);
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+    }
+    .problem-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+    }
+    @media (max-width: 768px) { .problem-inner { grid-template-columns: 1fr; gap: 2rem; } }
+    .problem-title {
+      font-family: var(--serif);
+      font-size: clamp(1.875rem, 4vw, 2.5rem);
+      line-height: 1.15; letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .problem-title em { font-style: italic; color: var(--accent-3); }
+    .problem-sub { font-size: 1rem; color: rgba(250,249,247,.6); line-height: 1.7; }
+    .pain-list { display: flex; flex-direction: column; gap: 1rem; }
+    .pain-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+    }
+    .pain-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: .875rem;
+    }
+    .pain-text { font-size: .9375rem; color: rgba(250,249,247,.8); line-height: 1.5; }
+    .pain-text strong { color: var(--paper); font-weight: 500; display: block; margin-bottom: .125rem; }
+
+    /* TEMPLATES GRID */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .template-card {
+      background: #fff; border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg); overflow: hidden;
+      text-decoration: none; color: inherit;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      display: flex; flex-direction: column;
+    }
+    .template-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px -4px rgba(0,0,0,.1);
+      border-color: var(--accent-3);
+    }
+    .template-cover {
+      height: 180px; background: var(--accent-2);
+      position: relative; overflow: hidden;
+    }
+    .template-cover-pattern {
+      position: absolute; inset: 0; opacity: .5;
+    }
+    .cover-teal { background: var(--teal-2); }
+    .cover-amber { background: var(--amber-2); }
+    .template-cover-label {
+      position: absolute; bottom: .875rem; left: .875rem;
+      background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
+      border-radius: 8px; padding: .375rem .75rem;
+      font-size: .75rem; font-weight: 500; color: var(--ink);
+    }
+    .template-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .template-cat {
+      font-size: .7rem; font-weight: 500; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: .5rem;
+    }
+    .template-name {
+      font-family: var(--serif); font-size: 1.125rem;
+      line-height: 1.3; margin-bottom: .625rem;
+    }
+    .template-desc {
+      font-size: .875rem; color: var(--ink-3);
+      line-height: 1.6; flex: 1; margin-bottom: 1.25rem;
+    }
+    .template-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: .875rem; border-top: 1px solid var(--paper-2);
+    }
+    .template-price {
+      font-size: 1.125rem; font-weight: 500; color: var(--ink);
+    }
+    .template-cta {
+      font-size: .8125rem; font-weight: 500;
+      color: var(--accent); display: flex;
+      align-items: center; gap: .25rem;
+    }
+
+    /* HOW IT WORKS */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem; margin-top: 3rem; position: relative;
+    }
+    .step-card {
+      padding: 1.5rem; border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg); background: #fff;
+      position: relative;
+    }
+    .step-num {
+      font-family: var(--serif); font-size: 2.5rem;
+      color: var(--paper-3); line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .step-title {
+      font-weight: 500; font-size: 1rem;
+      margin-bottom: .5rem;
+    }
+    .step-desc { font-size: .875rem; color: var(--ink-3); line-height: 1.6; }
+
+    /* TESTIMONIAL */
+    .testimonial-strip {
+      background: var(--accent-2);
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+    }
+    .testimonial-inner {
+      max-width: 800px; margin: 0 auto; text-align: center;
+    }
+    .quote-mark {
+      font-family: var(--serif); font-size: 5rem;
+      color: var(--accent-3); line-height: .6;
+      margin-bottom: 1.5rem;
+    }
+    .quote-text {
+      font-family: var(--serif);
+      font-size: clamp(1.25rem, 3vw, 1.875rem);
+      line-height: 1.4; color: var(--ink);
+      letter-spacing: -0.01em; margin-bottom: 2rem;
+    }
+    .quote-text em { font-style: italic; color: var(--accent); }
+    .quote-author {
+      display: flex; align-items: center; justify-content: center; gap: .875rem;
+    }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1rem;
+    }
+    .author-name { font-weight: 500; font-size: .9375rem; }
+    .author-role { font-size: .8125rem; color: var(--ink-3); }
+
+    /* BLOG */
+    .blog-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .blog-card {
+      border: 1px solid var(--paper-3); border-radius: var(--radius-lg);
+      overflow: hidden; text-decoration: none; color: inherit;
+      background: #fff;
+      transition: transform .2s, box-shadow .2s;
+      display: flex; flex-direction: column;
+    }
+    .blog-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px -4px rgba(0,0,0,.08);
+    }
+    .blog-cover {
+      height: 160px; background: var(--paper-2);
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .blog-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .blog-date { font-size: .75rem; color: var(--ink-3); margin-bottom: .5rem; }
+    .blog-title {
+      font-family: var(--serif); font-size: 1.1875rem;
+      line-height: 1.3; margin-bottom: .625rem;
+    }
+    .blog-excerpt {
+      font-size: .875rem; color: var(--ink-3);
+      line-height: 1.6; flex: 1;
+    }
+
+    /* CTA STRIP */
+    .cta-strip {
+      background: var(--ink);
+      padding: clamp(3.5rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+      text-align: center;
+    }
+    .cta-inner { max-width: 600px; margin: 0 auto; }
+    .cta-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--paper); line-height: 1.1;
+      letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .cta-title em { font-style: italic; color: var(--accent-3); }
+    .cta-sub {
+      font-size: 1rem; color: rgba(250,249,247,.6);
+      line-height: 1.7; margin-bottom: 2.5rem;
+    }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary-inv {
+      background: var(--paper); color: var(--ink);
+      padding: .875rem 2rem; border-radius: 10px;
+      font-size: .9375rem; font-weight: 500;
+      text-decoration: none; transition: opacity .15s;
+    }
+    .btn-primary-inv:hover { opacity: .88; }
+    .btn-outline-inv {
+      border: 1px solid rgba(255,255,255,.2); color: var(--paper);
+      padding: .875rem 2rem; border-radius: 10px;
+      font-size: .9375rem; text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline-inv:hover { border-color: rgba(255,255,255,.5); }
+
+    /* FOOTER */
+    footer {
+      background: var(--paper-2);
+      border-top: 1px solid var(--paper-3);
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--serif); font-size: 1.125rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      font-size: .875rem; color: var(--ink-3);
+      text-decoration: none; transition: color .15s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: .8125rem; color: var(--ink-3); }
+
+    /* FADE IN ANIMATION */
+    .fade-up {
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp .6s ease forwards;
+    }
+    .fade-up:nth-child(1) { animation-delay: .0s; }
+    .fade-up:nth-child(2) { animation-delay: .1s; }
+    .fade-up:nth-child(3) { animation-delay: .2s; }
+    @keyframes fadeUp { to { opacity: 1; transform: none; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Notion<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/templates">Templates</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/templates" class="nav-cta">Browse templates</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        Built for digital agencies
+      </div>
+      <h1 class="hero-title">
+        Stop losing clients to <em>broken workflows</em>
+      </h1>
+      <p class="hero-sub">
+        Professional Notion systems that make your agency look
+        like it has its act together — because it does.
+        Onboard clients in 45 minutes. Manage projects without the chaos.
+      </p>
+      <div class="hero-actions">
+        <a href="/templates" class="btn-primary">Browse all templates</a>
+        <a href="/blog" class="btn-ghost">Read the blog →</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">12+</div>
+          <div class="stat-label">templates</div>
+        </div>
+        <div>
+          <div class="stat-num">340+</div>
+          <div class="stat-label">agencies using them</div>
+        </div>
+        <div>
+          <div class="stat-num">4.9</div>
+          <div class="stat-label">avg. rating</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual -->
+    <div class="hero-visual">
+      <div class="portal-card">
+        <div class="card-topbar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <div class="card-url">notion.so/acme/brightwave-portal</div>
+        </div>
+        <div class="card-body">
+          <div class="card-header">
+            <div class="card-title">Brightwave Inc.</div>
+            <div class="card-badge">On track</div>
+          </div>
+          <div class="mini-progress">
+            <div class="mini-progress-label">
+              <span>Overall progress</span><span>60%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill"></div></div>
+          </div>
+          <div class="mini-tasks">
+            <div class="mini-task"><div class="task-dot td-done"></div>Brand discovery workshop</div>
+            <div class="mini-task"><div class="task-dot td-done"></div>Competitor audit</div>
+            <div class="mini-task"><div class="task-dot td-prog"></div>Logo concepts — round 1</div>
+            <div class="mini-task"><div class="task-dot td-todo"></div>Brand guidelines document</div>
+          </div>
+        </div>
+      </div>
+      <div class="float-chip chip-1">
+        <div class="chip-dot-g"></div>
+        Client onboarded in 42 min
+      </div>
+      <div class="float-chip chip-2">
+        <div class="chip-dot-p"></div>
+        3 tasks need review
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM STRIP -->
+<div class="problem-strip">
+  <div class="problem-inner">
+    <div>
+      <p class="section-label" style="color:var(--accent-3)">The problem</p>
+      <h2 class="problem-title">
+        Your agency is good.<br/>
+        Your <em>systems</em> are not.
+      </h2>
+      <p class="problem-sub">
+        Every agency hits the same wall. The work is great.
+        The operations are a mess of Slack threads, missed emails,
+        and "which version is final?" conversations.
+        Your clients notice. Your team burns out.
+      </p>
+    </div>
+    <div class="pain-list">
+      <div class="pain-item">
+        <div class="pain-icon">✉</div>
+        <div class="pain-text">
+          <strong>Onboarding takes half a day</strong>
+          Setting up a new client means chasing docs, explaining the same process again, and hoping nothing falls through the gaps.
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">🔀</div>
+        <div class="pain-text">
+          <strong>Feedback lives everywhere except one place</strong>
+          Revisions in email, approvals in Slack, files in Drive. Nobody knows what's actually signed off.
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📊</div>
+        <div class="pain-text">
+          <strong>No one knows the real project status</strong>
+          The answer to "where are we?" requires a 15-minute conversation instead of a two-second glance.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURED TEMPLATES -->
+<section class="section">
+  <div class="section-header">
+    <div>
+      <p class="section-label">Template library</p>
+      <h2 class="section-title">Systems that agencies actually use</h2>
+      <p class="section-sub">Every template is built around a specific agency pain point. Not pretty pages — working systems.</p>
+    </div>
+    <a href="/templates" class="link-arrow">See all templates →</a>
+  </div>
+
+  <div class="templates-grid">
+    {featured.length > 0 ? featured.map(t => (
+      <a href={`/templates/${String(t.id).replace(/\.mdx?$/, '')}`} class="template-card">
+        <div class={`template-cover ${t.data.category === 'Agency' ? '' : t.data.category === 'Operations' ? 'cover-teal' : 'cover-amber'}`}>
+          <div class="template-cover-label">{t.data.category}</div>
+        </div>
+        <div class="template-body">
+          <div class="template-cat">{t.data.category}</div>
+          <div class="template-name">{t.data.title}</div>
+          <div class="template-desc">{t.data.description}</div>
+          <div class="template-footer">
+            <div class="template-price">€{t.data.price}</div>
+            <div class="template-cta">View details →</div>
+          </div>
+        </div>
+      </a>
+    )) : (
+      <>
+        {['Agency client portal', 'Project OS', 'Client CRM'].map((name, i) => (
+          <div class="template-card" style="cursor:default">
+            <div class={`template-cover ${i === 1 ? 'cover-teal' : i === 2 ? 'cover-amber' : ''}`}>
+              <div class="template-cover-label">Agency</div>
+            </div>
+            <div class="template-body">
+              <div class="template-cat">Agency</div>
+              <div class="template-name">{name}</div>
+              <div class="template-desc">A professional Notion system built specifically for digital agencies managing client work.</div>
+              <div class="template-footer">
+                <div class="template-price">€49</div>
+                <div class="template-cta">View details →</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
+    )}
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" style="background:var(--paper-2); max-width:100%; padding-left:0; padding-right:0;">
+  <div style="max-width:1100px; margin:0 auto; padding: clamp(3rem,8vw,6rem) clamp(1.5rem,5vw,4rem);">
+    <div class="section-header">
+      <div>
+        <p class="section-label">How it works</p>
+        <h2 class="section-title">Up and running in an afternoon</h2>
+      </div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-up">
+        <div class="step-num">01</div>
+        <div class="step-title">Buy the template</div>
+        <div class="step-desc">Purchase on Gumroad. You get instant access to the Notion template link plus a setup guide and Loom walkthrough video.</div>
+      </div>
+      <div class="step-card fade-up">
+        <div class="step-num">02</div>
+        <div class="step-title">Duplicate to your workspace</div>
+        <div class="step-desc">One click in Notion. The entire structure — all databases, views, and relations — copies into your workspace instantly.</div>
+      </div>
+      <div class="step-card fade-up">
+        <div class="step-num">03</div>
+        <div class="step-title">Customise in 15 minutes</div>
+        <div class="step-desc">Follow the setup checklist inside the template. Add your branding, team names, and first client. Takes less time than a coffee break.</div>
+      </div>
+      <div class="step-card fade-up">
+        <div class="step-num">04</div>
+        <div class="step-title">Share with your client</div>
+        <div class="step-desc">Share the portal link. Your client lands on a professional, branded workspace. Their first impression of your agency just got significantly better.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<div class="testimonial-strip">
+  <div class="testimonial-inner">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">
+      We onboarded three clients in the same week and not one of them
+      emailed asking where their files were. That has <em>never happened before.</em>
+    </p>
+    <div class="quote-author">
+      <div class="author-avatar">S</div>
+      <div>
+        <div class="author-name">Sarah Moran</div>
+        <div class="author-role">Director, Acme Creative Agency</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOG -->
+{recentPosts.length > 0 && (
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <p class="section-label">From the blog</p>
+        <h2 class="section-title">Thinking on agency operations</h2>
+      </div>
+      <a href="/blog" class="link-arrow">All posts →</a>
+    </div>
+    <div class="blog-grid">
+      {recentPosts.map(post => (
+        <a href={`/blog/${String(post.id).replace(/\.mdx?$/, '')}`} class="blog-card">
+          <div class="blog-cover"></div>
+          <div class="blog-body">
+            <div class="blog-date">
+              {post.data.pubDate.toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})}
+            </div>
+            <div class="blog-title">{post.data.title}</div>
+            <div class="blog-excerpt">{post.data.description}</div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+<!-- CTA -->
+<div class="cta-strip">
+  <div class="cta-inner">
+    <h2 class="cta-title">Your agency deserves <em>systems</em> that work</h2>
+    <p class="cta-sub">Stop patching your operations with workarounds. Pick the template that fits your biggest pain point and have it running today.</p>
+    <div class="cta-actions">
+      <a href="/templates" class="btn-primary-inv">Browse the library</a>
+      <a href="/blog" class="btn-outline-inv">Read the blog</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <ul class="footer-links">
+      <li><a href="/templates">Templates</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 NotionFlow</p>
+  </div>
+</footer>
+
+</body>
+</html>

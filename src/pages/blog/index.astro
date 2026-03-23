@@ -1,0 +1,468 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+let posts: CollectionEntry<'blog'>[] = [];
+try {
+  const all = await getCollection('blog');
+  posts = all.filter(p => p.id != null);
+} catch (e) {
+  console.error('[blog index] getCollection error:', e);
+}
+
+const sorted = [...posts].sort((a, b) =>
+  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const allTags = Array.from(new Set(posts.flatMap(p => p.data.tags ?? [])));
+
+const placeholders = [
+  {
+    slug: 'client-onboarding-system',
+    title: 'How we cut client onboarding from 4 hours to 45 minutes',
+    desc: 'A step-by-step breakdown of the Notion system a 10-person marketing agency used to transform their onboarding process.',
+    date: '18 March 2026',
+    tag: 'Case study',
+    readTime: '6 min read',
+  },
+  {
+    slug: 'notion-mistakes-agencies',
+    title: '5 Notion mistakes agencies make (and how to fix them)',
+    desc: 'The most common ways agencies set up Notion wrong, why it causes chaos, and the exact fixes that turn a messy workspace into a system.',
+    date: '11 March 2026',
+    tag: 'Tips',
+    readTime: '4 min read',
+  },
+  {
+    slug: 'client-portal-vs-email',
+    title: 'Why your clients keep emailing you — and how a portal fixes it',
+    desc: 'Every "just checking in" email your client sends is a signal that your project visibility is broken. Here is how to fix it permanently.',
+    date: '4 March 2026',
+    tag: 'Agency ops',
+    readTime: '5 min read',
+  },
+  {
+    slug: 'notion-agency-os',
+    title: 'Building an agency OS in Notion: the complete guide',
+    desc: 'From client portals to team capacity views — how to design a Notion workspace that runs your entire agency from one place.',
+    date: '25 February 2026',
+    tag: 'Guide',
+    readTime: '9 min read',
+  },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog — NotionFlow</title>
+  <meta name="description" content="Thinking on Notion, agency operations, and building systems that actually work."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #0f0e0d;
+      --ink-2:    #3d3b38;
+      --ink-3:    #7a7772;
+      --paper:    #faf9f7;
+      --paper-2:  #f0ede8;
+      --paper-3:  #e4e0d9;
+      --accent:   #5c4ee8;
+      --accent-2: #ede9ff;
+      --accent-3: #c8c0f8;
+      --teal:     #0d8a6a;
+      --teal-2:   #e0f5ee;
+      --serif:    'DM Serif Display', Georgia, serif;
+      --sans:     'DM Sans', system-ui, sans-serif;
+      --radius:   12px;
+      --radius-lg:20px;
+    }
+
+    body {
+      font-family: var(--sans); background: var(--paper);
+      color: var(--ink); line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem); height: 64px;
+      background: rgba(250,249,247,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .nav-logo {
+      font-family: var(--serif); font-size: 1.25rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: .875rem; color: var(--ink-2);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: .5rem 1.25rem; border-radius: 8px; font-weight: 500 !important;
+    }
+
+    /* HERO */
+    .page-hero {
+      max-width: 860px; margin: 0 auto;
+      padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem) 0;
+    }
+    .page-eyebrow {
+      font-size: .75rem; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .875rem;
+    }
+    .page-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.08; letter-spacing: -0.02em; margin-bottom: .875rem;
+    }
+    .page-sub {
+      font-size: 1.0625rem; color: var(--ink-2);
+      line-height: 1.7; max-width: 520px; margin-bottom: 2.5rem;
+    }
+
+    /* TAG FILTER */
+    .tag-bar {
+      max-width: 860px; margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 4rem) 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap;
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .tag-btn {
+      font-size: .8125rem; font-weight: 500;
+      padding: .375rem .875rem; border-radius: 100px;
+      border: 1px solid var(--paper-3);
+      background: #fff; color: var(--ink-2);
+      cursor: pointer; transition: all .15s;
+    }
+    .tag-btn:hover { border-color: var(--accent-3); color: var(--accent); }
+    .tag-btn.active {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+
+    /* FEATURED POST (first post, larger) */
+    .post-wrap {
+      max-width: 860px; margin: 0 auto;
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem) 5rem;
+    }
+
+    .post-featured {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2.5rem; align-items: center;
+      border: 1px solid var(--paper-3); border-radius: var(--radius-lg);
+      overflow: hidden; background: #fff; margin-bottom: 2rem;
+      text-decoration: none; color: inherit;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .post-featured:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px -4px rgba(0,0,0,.08);
+    }
+    @media (max-width: 640px) { .post-featured { grid-template-columns: 1fr; } }
+
+    .featured-cover {
+      height: 100%; min-height: 240px;
+      background: var(--accent-2); position: relative;
+    }
+    .featured-cover-inner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .featured-cover-text {
+      font-family: var(--serif); font-size: 4rem;
+      color: var(--accent-3); opacity: .4; line-height: 1;
+    }
+    .featured-body { padding: 2rem 2rem 2rem 0; }
+    @media (max-width: 640px) { .featured-body { padding: 1.5rem; } }
+
+    .post-tag {
+      display: inline-block;
+      font-size: .6875rem; font-weight: 500; letter-spacing: .06em;
+      text-transform: uppercase; padding: .3rem .75rem;
+      border-radius: 100px; margin-bottom: .875rem;
+    }
+    .tag-case  { background: var(--accent-2); color: var(--accent); }
+    .tag-tips  { background: var(--teal-2); color: var(--teal); }
+    .tag-ops   { background: #fef0da; color: #b86c10; }
+    .tag-guide { background: var(--paper-2); color: var(--ink-2); }
+    .tag-default { background: var(--paper-2); color: var(--ink-2); }
+
+    .featured-title {
+      font-family: var(--serif); font-size: 1.5rem;
+      line-height: 1.25; letter-spacing: -0.01em; margin-bottom: .875rem;
+    }
+    .featured-desc {
+      font-size: .9375rem; color: var(--ink-3);
+      line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .post-meta {
+      display: flex; align-items: center; gap: .875rem;
+      font-size: .8125rem; color: var(--ink-3);
+    }
+    .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--paper-3); }
+    .read-more { color: var(--accent); font-weight: 500; }
+
+    /* POST GRID */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .post-card {
+      border: 1px solid var(--paper-3); border-radius: var(--radius-lg);
+      overflow: hidden; text-decoration: none; color: inherit;
+      background: #fff; display: flex; flex-direction: column;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .post-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px -4px rgba(0,0,0,.08);
+    }
+    .post-card[data-tag].hidden { display: none; }
+
+    .card-cover {
+      height: 140px; background: var(--paper-2);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-cover-text {
+      font-family: var(--serif); font-size: 2.5rem;
+      opacity: .15; line-height: 1;
+    }
+    .card-body {
+      padding: 1.125rem; flex: 1; display: flex; flex-direction: column;
+    }
+    .card-title {
+      font-family: var(--serif); font-size: 1.0625rem;
+      line-height: 1.3; margin-bottom: .625rem; flex: 1;
+    }
+    .card-desc {
+      font-size: .8125rem; color: var(--ink-3);
+      line-height: 1.6; margin-bottom: 1rem;
+    }
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: .75rem; border-top: 1px solid var(--paper-2);
+      font-size: .75rem; color: var(--ink-3);
+    }
+
+    /* NEWSLETTER */
+    .newsletter-strip {
+      background: var(--accent-2);
+      padding: clamp(3rem, 6vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+    }
+    .newsletter-inner {
+      max-width: 560px; margin: 0 auto; text-align: center;
+    }
+    .nl-title {
+      font-family: var(--serif); font-size: clamp(1.5rem, 4vw, 2rem);
+      letter-spacing: -0.01em; margin-bottom: .75rem;
+    }
+    .nl-sub {
+      font-size: .9375rem; color: var(--ink-2);
+      line-height: 1.7; margin-bottom: 1.75rem;
+    }
+    .nl-form { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
+    .nl-input {
+      flex: 1; min-width: 220px; padding: .75rem 1rem;
+      border: 1px solid var(--accent-3); border-radius: 10px;
+      font-family: var(--sans); font-size: .9375rem;
+      background: #fff; color: var(--ink); outline: none;
+    }
+    .nl-input:focus { border-color: var(--accent); }
+    .nl-btn {
+      background: var(--accent); color: #fff;
+      padding: .75rem 1.5rem; border-radius: 10px;
+      border: none; font-family: var(--sans);
+      font-size: .9375rem; font-weight: 500;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .nl-btn:hover { opacity: .88; }
+    .nl-note { font-size: .75rem; color: var(--ink-3); margin-top: .875rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--paper-2); border-top: 1px solid var(--paper-3);
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--serif); font-size: 1.125rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      font-size: .875rem; color: var(--ink-3); text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: .8125rem; color: var(--ink-3); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Notion<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/templates">Templates</a></li>
+    <li><a href="/blog" class="active">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/templates" class="nav-cta">Browse templates</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <p class="page-eyebrow">The blog</p>
+  <h1 class="page-title">Thinking on agency operations</h1>
+  <p class="page-sub">Case studies, systems breakdowns, and honest takes on making agencies run better with Notion.</p>
+</div>
+
+{(allTags.length > 0) && (
+  <div class="tag-bar">
+    <button class="tag-btn active" onclick="filterPosts('All')">All</button>
+    {allTags.map(tag => (
+      <button class="tag-btn" onclick={`filterPosts('${tag}')`}>{tag}</button>
+    ))}
+  </div>
+)}
+
+<div class="post-wrap">
+
+  {sorted.length > 0 ? (
+    <>
+      {sorted.slice(0, 1).map(post => (
+        <a href={`/blog/${post.id}`} class="post-featured" data-tag={post.data.tags?.[0] ?? ''}>
+          <div class="featured-cover">
+            <div class="featured-cover-inner">
+              <div class="featured-cover-text">"</div>
+            </div>
+          </div>
+          <div class="featured-body">
+            <span class="post-tag tag-default">{post.data.tags?.[0] ?? 'Post'}</span>
+            <div class="featured-title">{post.data.title}</div>
+            <div class="featured-desc">{post.data.description}</div>
+            <div class="post-meta">
+              <span>{post.data.pubDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              <span class="meta-dot"></span>
+              <span class="read-more">Read →</span>
+            </div>
+          </div>
+        </a>
+      ))}
+      <div class="posts-grid">
+        {sorted.slice(1).map(post => (
+          <a href={`/blog/${post.id}`} class="post-card" data-tag={post.data.tags?.[0] ?? ''}>
+            <div class="card-cover">
+              <div class="card-cover-text">"</div>
+            </div>
+            <div class="card-body">
+              <span class="post-tag tag-default" style="margin-bottom:.625rem">{post.data.tags?.[0] ?? 'Post'}</span>
+              <div class="card-title">{post.data.title}</div>
+              <div class="card-desc">{post.data.description}</div>
+              <div class="card-footer">
+                <span>{post.data.pubDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                <span style="color:var(--accent);font-weight:500">Read →</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </>
+  ) : (
+    <>
+      <a href="#" class="post-featured">
+        <div class="featured-cover">
+          <div class="featured-cover-inner">
+            <div class="featured-cover-text">"</div>
+          </div>
+        </div>
+        <div class="featured-body">
+          <span class="post-tag tag-case">Case study</span>
+          <div class="featured-title">{placeholders[0].title}</div>
+          <div class="featured-desc">{placeholders[0].desc}</div>
+          <div class="post-meta">
+            <span>{placeholders[0].date}</span>
+            <span class="meta-dot"></span>
+            <span>{placeholders[0].readTime}</span>
+            <span class="meta-dot"></span>
+            <span class="read-more">Read →</span>
+          </div>
+        </div>
+      </a>
+      <div class="posts-grid">
+        {placeholders.slice(1).map(p => (
+          <div class="post-card">
+            <div class="card-cover">
+              <div class="card-cover-text">"</div>
+            </div>
+            <div class="card-body">
+              <span class={`post-tag ${p.tag === 'Tips' ? 'tag-tips' : p.tag === 'Agency ops' ? 'tag-ops' : 'tag-guide'}`}
+                    style="margin-bottom:.625rem">{p.tag}</span>
+              <div class="card-title">{p.title}</div>
+              <div class="card-desc">{p.desc}</div>
+              <div class="card-footer">
+                <span>{p.date}</span>
+                <span style="color:var(--accent);font-weight:500">{p.readTime}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+
+</div>
+
+<div class="newsletter-strip">
+  <div class="newsletter-inner">
+    <h2 class="nl-title">Get new posts in your inbox</h2>
+    <p class="nl-sub">One email per week. Agency systems breakdowns, Notion tips, and behind-the-scenes on building a template business. No filler.</p>
+    <div class="nl-form">
+      <input class="nl-input" type="email" placeholder="your@email.com"/>
+      <button class="nl-btn">Subscribe</button>
+    </div>
+    <p class="nl-note">No spam. Unsubscribe any time.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <ul class="footer-links">
+      <li><a href="/templates">Templates</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 NotionFlow</p>
+  </div>
+</footer>
+
+<script>
+  function filterPosts(tag: string) {
+    document.querySelectorAll<HTMLElement>('.tag-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent?.trim() === tag);
+    });
+    document.querySelectorAll<HTMLElement>('.post-card, .post-featured').forEach(card => {
+      const cardTag = card.dataset.tag ?? '';
+      card.classList.toggle('hidden', tag !== 'All' && cardTag !== tag);
+    });
+  }
+  (window as any).filterPosts = filterPosts;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+let templates: CollectionEntry<'templates'>[] = [];
+try { templates = await getCollection('templates'); } catch {}
+
+const sorted = templates.sort((a, b) =>
+  Number(b.data.featured) - Number(a.data.featured)
+);
+
+const categories = ['All', ...Array.from(new Set(templates.map(t => t.data.category)))];
+
+const placeholders = [
+  { slug: 'client-portal',  title: 'Agency client portal',  desc: 'Replace onboarding chaos with a professional client workspace. Set up in 15 minutes.',  price: 49,  cat: 'Agency',      cover: 'purple' },
+  { slug: 'project-os',     title: 'Project OS',             desc: 'One Notion workspace to manage every active project, deadline, and deliverable.',         price: 39,  cat: 'Agency',      cover: 'teal'   },
+  { slug: 'client-crm',     title: 'Client CRM',             desc: 'Track every prospect and client relationship from first DM to signed contract.',          price: 29,  cat: 'Agency',      cover: 'amber'  },
+  { slug: 'invoice-tracker',title: 'Invoice tracker',         desc: 'Know exactly what has been sent, what is due, and what has been paid at all times.',      price: 29,  cat: 'Finance',     cover: 'teal'   },
+  { slug: 'content-planner',title: 'Content planner',         desc: 'Plan, write, schedule, and repurpose every piece of content from one linked system.',     price: 29,  cat: 'Marketing',   cover: 'purple' },
+  { slug: 'team-wiki',      title: 'Team wiki',               desc: 'A single source of truth for your SOPs, processes, and team knowledge.',                  price: 39,  cat: 'Operations',  cover: 'amber'  },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Template library — NotionFlow</title>
+  <meta name="description" content="Professional Notion templates built for digital agencies. Client portals, project systems, CRMs and more."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #0f0e0d;
+      --ink-2:    #3d3b38;
+      --ink-3:    #7a7772;
+      --paper:    #faf9f7;
+      --paper-2:  #f0ede8;
+      --paper-3:  #e4e0d9;
+      --accent:   #5c4ee8;
+      --accent-2: #ede9ff;
+      --accent-3: #c8c0f8;
+      --teal:     #0d8a6a;
+      --teal-2:   #e0f5ee;
+      --amber:    #b86c10;
+      --amber-2:  #fef0da;
+      --serif:    'DM Serif Display', Georgia, serif;
+      --sans:     'DM Sans', system-ui, sans-serif;
+      --radius:   12px;
+      --radius-lg:20px;
+    }
+
+    body {
+      font-family: var(--sans); background: var(--paper);
+      color: var(--ink); line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem); height: 64px;
+      background: rgba(250,249,247,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .nav-logo {
+      font-family: var(--serif); font-size: 1.25rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: .875rem; color: var(--ink-2);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: .5rem 1.25rem; border-radius: 8px; font-weight: 500 !important;
+    }
+
+    /* HERO */
+    .page-hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem) 2rem;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 2rem; align-items: end;
+    }
+    @media (max-width: 640px) { .page-hero { grid-template-columns: 1fr; } }
+    .page-eyebrow {
+      font-size: .75rem; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .875rem;
+    }
+    .page-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.08; letter-spacing: -0.02em; margin-bottom: .875rem;
+    }
+    .page-sub {
+      font-size: 1.0625rem; color: var(--ink-2);
+      line-height: 1.7; max-width: 520px;
+    }
+    .page-count {
+      font-size: .875rem; color: var(--ink-3);
+      text-align: right; white-space: nowrap;
+    }
+    .page-count strong { color: var(--ink); font-weight: 500; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      max-width: 1100px; margin: 0 auto;
+      padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+      display: flex; gap: .5rem; flex-wrap: wrap;
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .filter-btn {
+      font-size: .8125rem; font-weight: 500;
+      padding: .4375rem 1rem; border-radius: 100px;
+      border: 1px solid var(--paper-3);
+      background: #fff; color: var(--ink-2);
+      cursor: pointer; transition: all .15s;
+    }
+    .filter-btn:hover { border-color: var(--accent-3); color: var(--accent); }
+    .filter-btn.active {
+      background: var(--accent); border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* GRID */
+    .grid-wrap {
+      max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem) 5rem;
+    }
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .template-card {
+      background: #fff; border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg); overflow: hidden;
+      text-decoration: none; color: inherit;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      display: flex; flex-direction: column;
+    }
+    .template-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px -4px rgba(0,0,0,.1);
+      border-color: var(--accent-3);
+    }
+    .template-card[data-cat].hidden { display: none; }
+
+    .cover {
+      height: 180px; position: relative; overflow: hidden;
+    }
+    .cover-purple { background: var(--accent-2); }
+    .cover-teal   { background: var(--teal-2); }
+    .cover-amber  { background: var(--amber-2); }
+
+    .cover-deco {
+      position: absolute; inset: 0; opacity: .25;
+    }
+    .cover-label {
+      position: absolute; bottom: .875rem; left: .875rem;
+      background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
+      border-radius: 8px; padding: .375rem .75rem;
+      font-size: .75rem; font-weight: 500; color: var(--ink);
+    }
+    .cover-featured {
+      position: absolute; top: .875rem; right: .875rem;
+      background: var(--accent); color: #fff;
+      border-radius: 8px; padding: .25rem .625rem;
+      font-size: .6875rem; font-weight: 500;
+    }
+
+    .card-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .card-cat {
+      font-size: .7rem; font-weight: 500; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .5rem;
+    }
+    .card-name {
+      font-family: var(--serif); font-size: 1.125rem;
+      line-height: 1.3; margin-bottom: .625rem;
+    }
+    .card-desc {
+      font-size: .875rem; color: var(--ink-3);
+      line-height: 1.6; flex: 1; margin-bottom: 1.25rem;
+    }
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: .875rem; border-top: 1px solid var(--paper-2);
+    }
+    .card-price { font-size: 1.125rem; font-weight: 500; }
+    .card-cta { font-size: .8125rem; font-weight: 500; color: var(--accent); }
+
+    /* EMPTY STATE */
+    .empty {
+      grid-column: 1/-1; text-align: center;
+      padding: 4rem 2rem; color: var(--ink-3);
+    }
+    .empty p { font-size: 1rem; }
+
+    /* CTA STRIP */
+    .cta-strip {
+      background: var(--ink);
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+      text-align: center;
+    }
+    .cta-inner { max-width: 560px; margin: 0 auto; }
+    .cta-title {
+      font-family: var(--serif);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      color: var(--paper); line-height: 1.1;
+      letter-spacing: -0.02em; margin-bottom: .875rem;
+    }
+    .cta-title em { font-style: italic; color: var(--accent-3); }
+    .cta-sub {
+      font-size: .9375rem; color: rgba(250,249,247,.6);
+      line-height: 1.7; margin-bottom: 2rem;
+    }
+    .btn-inv {
+      display: inline-block;
+      background: var(--paper); color: var(--ink);
+      padding: .875rem 2rem; border-radius: 10px;
+      font-size: .9375rem; font-weight: 500;
+      text-decoration: none; transition: opacity .15s;
+    }
+    .btn-inv:hover { opacity: .88; }
+
+    /* FOOTER */
+    footer {
+      background: var(--paper-2); border-top: 1px solid var(--paper-3);
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--serif); font-size: 1.125rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      font-size: .875rem; color: var(--ink-3); text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: .8125rem; color: var(--ink-3); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Notion<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/templates" class="active">Templates</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/about">About</a></li>
+     <li><a href="/contact">Contact</a></li>
+    <li><a href="/templates" class="nav-cta">Browse templates</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div>
+    <p class="page-eyebrow">Template library</p>
+    <h1 class="page-title">Systems your agency will actually use</h1>
+    <p class="page-sub">Every template solves a specific agency pain. Not aesthetic Notion pages — working operational systems.</p>
+  </div>
+  <div class="page-count">
+    <strong>{sorted.length > 0 ? sorted.length : placeholders.length}</strong> templates
+  </div>
+</div>
+
+<div class="filter-bar">
+  {categories.length > 1
+    ? categories.map(cat => (
+        <button class={`filter-btn ${cat === 'All' ? 'active' : ''}`}
+                onclick={`filterCards('${cat}')`}>
+          {cat}
+        </button>
+      ))
+    : ['All','Agency','Finance','Marketing','Operations'].map(cat => (
+        <button class={`filter-btn ${cat === 'All' ? 'active' : ''}`}
+                onclick={`filterCards('${cat}')`}>
+          {cat}
+        </button>
+      ))
+  }
+</div>
+
+<div class="grid-wrap">
+  <div class="templates-grid" id="grid">
+
+    {sorted.length > 0
+      ? sorted.map(t => (
+          <a href={`/templates/${t.slug}`} class="template-card" data-cat={t.data.category}>
+            <div class={`cover cover-purple`}>
+              <div class="cover-label">{t.data.category}</div>
+              {t.data.featured && <div class="cover-featured">Featured</div>}
+            </div>
+            <div class="card-body">
+              <div class="card-cat">{t.data.category}</div>
+              <div class="card-name">{t.data.title}</div>
+              <div class="card-desc">{t.data.description}</div>
+              <div class="card-footer">
+                <div class="card-price">€{t.data.price}</div>
+                <div class="card-cta">View details →</div>
+              </div>
+            </div>
+          </a>
+        ))
+      : placeholders.map(p => (
+          <div class="template-card" data-cat={p.cat}>
+            <div class={`cover cover-${p.cover}`}>
+              <div class="cover-label">{p.cat}</div>
+            </div>
+            <div class="card-body">
+              <div class="card-cat">{p.cat}</div>
+              <div class="card-name">{p.title}</div>
+              <div class="card-desc">{p.desc}</div>
+              <div class="card-footer">
+                <div class="card-price">€{p.price}</div>
+                <div class="card-cta">Coming soon</div>
+              </div>
+            </div>
+          </div>
+        ))
+    }
+
+  </div>
+</div>
+
+<div class="cta-strip">
+  <div class="cta-inner">
+    <h2 class="cta-title">Need a <em>custom</em> setup?</h2>
+    <p class="cta-sub">I offer done-for-you Notion builds tailored to your agency's exact workflow. Book a free 20-minute audit and I'll show you what's possible.</p>
+    <a href="mailto:hello@notionflow.com" class="btn-inv">Book a free audit</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <ul class="footer-links">
+      <li><a href="/templates">Templates</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+       <li><a href="/contact">Contact</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 NotionFlow</p>
+  </div>
+</footer>
+
+<script>
+  function filterCards(cat: string) {
+    document.querySelectorAll<HTMLElement>('.filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent?.trim() === cat);
+    });
+    document.querySelectorAll<HTMLElement>('.template-card').forEach(card => {
+      const cardCat = card.dataset.cat ?? '';
+      card.classList.toggle('hidden', cat !== 'All' && cardCat !== cat);
+    });
+  }
+  (window as any).filterCards = filterCards;
+</script>
+
+</body>
+</html>

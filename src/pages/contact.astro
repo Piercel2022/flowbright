@@ -1,0 +1,245 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a free audit — NotionFlow</title>
+  <meta name="description" content="Book a free 20-minute Notion audit. I'll look at your current agency setup and tell you exactly where the bottlenecks are — no pitch, just diagnosis."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0f0e0d;--ink-2:#3d3b38;--ink-3:#7a7772;--paper:#faf9f7;--paper-2:#f0ede8;--paper-3:#e4e0d9;--navy:#1B2340;--accent:#3B5BDB;--accent-2:#D0EBFF;--teal:#0D9E75;--teal-2:#DCFCE7;--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif}
+    body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,5vw,4rem);height:64px;border-bottom:1px solid var(--paper-3)}
+    .nav-logo{font-family:var(--serif);font-size:1.25rem;color:var(--ink);text-decoration:none}
+    .nav-logo span{color:var(--accent)}
+    .nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+    .nav-links a{font-size:.875rem;color:var(--ink-2);text-decoration:none;transition:color .15s}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+    .nav-cta{background:var(--accent);color:#fff!important;padding:.5rem 1.25rem;border-radius:8px;font-weight:500!important}
+    .page-hero{max-width:1100px;margin:0 auto;padding:clamp(3rem,7vw,5rem) clamp(1.5rem,5vw,4rem) 0;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+    @media(max-width:768px){.page-hero{grid-template-columns:1fr}}
+    .hero-eyebrow{font-size:.75rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.875rem}
+    .hero-title{font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);line-height:1.08;letter-spacing:-0.02em;margin-bottom:1.25rem}
+    .hero-title em{font-style:italic;color:var(--accent)}
+    .hero-desc{font-size:1.0625rem;color:var(--ink-2);line-height:1.75;margin-bottom:2rem}
+    .what-happens{display:flex;flex-direction:column;gap:1rem}
+    .what-item{display:flex;gap:1rem;align-items:flex-start}
+    .what-num{width:28px;height:28px;border-radius:8px;background:var(--accent-2);color:var(--accent);font-size:.8125rem;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+    .what-text{font-size:.9875rem;color:var(--ink-2);line-height:1.6}
+    .what-text strong{color:var(--ink);font-weight:500;display:block;margin-bottom:.125rem}
+    .hero-right{padding-top:.5rem}
+    .contact-card{background:#fff;border:1px solid var(--paper-3);border-radius:20px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,.04),0 16px 32px -8px rgba(27,35,64,.1);margin-bottom:1rem}
+    .card-header{background:var(--navy);padding:1.5rem 1.75rem;position:relative;overflow:hidden}
+    .card-header svg{position:absolute;inset:0;width:100%;height:100%;opacity:.1}
+    .card-header-label{font-size:.6875rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#A8B4D0;margin-bottom:.5rem;position:relative}
+    .card-header-title{font-family:var(--serif);font-size:1.25rem;color:#fff;position:relative}
+    .card-acc{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--accent)}
+    .card-body{padding:1.75rem}
+    .form-group{margin-bottom:1rem}
+    .form-label{display:block;font-size:.8125rem;font-weight:500;color:var(--ink-2);margin-bottom:.5rem}
+    .form-input{width:100%;padding:.6875rem .9375rem;border:1px solid var(--paper-3);border-radius:10px;font-family:var(--sans);font-size:.9375rem;color:var(--ink);background:var(--paper);outline:none;transition:border-color .15s}
+    .form-input:focus{border-color:var(--accent);background:#fff}
+    .form-input::placeholder{color:var(--ink-3)}
+    textarea.form-input{resize:vertical;min-height:90px;line-height:1.6}
+    .form-btn{width:100%;padding:.9375rem;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:1rem;font-weight:500;cursor:pointer;transition:opacity .15s;margin-top:.25rem}
+    .form-btn:hover{opacity:.88}
+    .form-note{font-size:.75rem;color:var(--ink-3);text-align:center;margin-top:.875rem;line-height:1.5}
+    .or-divider{display:flex;align-items:center;gap:1rem;margin:1.25rem 0;font-size:.8125rem;color:var(--ink-3)}
+    .or-line{flex:1;height:1px;background:var(--paper-3)}
+    .direct-email{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.875rem;border:1px solid var(--paper-3);border-radius:10px;text-decoration:none;color:var(--ink-2);font-size:.9375rem;font-weight:500;transition:all .15s;background:var(--paper)}
+    .direct-email:hover{border-color:var(--accent-2);color:var(--accent);background:var(--accent-2)}
+    .success-state{display:none;text-align:center;padding:2rem 1.75rem}
+    .success-icon{width:56px;height:56px;border-radius:50%;background:var(--teal-2);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem}
+    .success-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:.75rem}
+    .success-desc{font-size:.9375rem;color:var(--ink-2);line-height:1.7;margin-bottom:1.5rem}
+    .success-link{display:inline-block;background:var(--navy);color:#fff;padding:.75rem 1.5rem;border-radius:10px;font-size:.9375rem;font-weight:500;text-decoration:none}
+    .trust-card{background:#fff;border:1px solid var(--paper-3);border-radius:14px;padding:1.25rem 1.5rem}
+    .trust-title{font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:1rem}
+    .trust-list{display:flex;flex-direction:column;gap:.75rem}
+    .trust-item{display:flex;align-items:center;gap:.75rem;font-size:.9rem;color:var(--ink-2)}
+    .trust-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0}
+    .faq-section{max-width:1100px;margin:0 auto;padding:3rem clamp(1.5rem,5vw,4rem) 5rem}
+    .faq-title{font-family:var(--serif);font-size:1.75rem;letter-spacing:-0.01em;margin-bottom:2rem}
+    .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+    @media(max-width:640px){.faq-grid{grid-template-columns:1fr}}
+    .faq-item{border:1px solid var(--paper-3);border-radius:12px;padding:1.25rem;background:#fff}
+    .faq-q{font-size:.9875rem;font-weight:500;color:var(--ink);margin-bottom:.5rem;line-height:1.4}
+    .faq-a{font-size:.9rem;color:var(--ink-3);line-height:1.65}
+    .cta-strip{background:var(--navy);padding:clamp(3rem,6vw,5rem) clamp(1.5rem,5vw,4rem);text-align:center}
+    .cta-inner{max-width:560px;margin:0 auto}
+    .cta-title{font-family:var(--serif);font-size:clamp(1.75rem,4vw,2.5rem);color:#fff;line-height:1.1;letter-spacing:-0.02em;margin-bottom:.875rem}
+    .cta-title em{font-style:italic;color:#A8B4D0}
+    .cta-sub{font-size:.9375rem;color:rgba(250,249,247,.6);line-height:1.7;margin-bottom:2rem}
+    .btn-inv{display:inline-block;background:var(--paper);color:var(--ink);padding:.875rem 2rem;border-radius:10px;font-size:.9375rem;font-weight:500;text-decoration:none;transition:opacity .15s}
+    .btn-inv:hover{opacity:.88}
+    footer{background:var(--paper-2);border-top:1px solid var(--paper-3);padding:2rem clamp(1.5rem,5vw,4rem)}
+    .footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    .footer-logo{font-family:var(--serif);font-size:1.125rem;color:var(--ink);text-decoration:none}
+    .footer-logo span{color:var(--accent)}
+    .footer-links{display:flex;gap:1.5rem;list-style:none}
+    .footer-links a{font-size:.875rem;color:var(--ink-3);text-decoration:none}
+    .footer-links a:hover{color:var(--accent)}
+    .footer-copy{font-size:.8125rem;color:var(--ink-3)}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">Notion<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/templates">Templates</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/contact" class="active nav-cta">Book a free audit</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div>
+    <p class="hero-eyebrow">Free 20-minute audit</p>
+    <h1 class="hero-title">Let me look at your setup and tell you <em>exactly</em> what to fix</h1>
+    <p class="hero-desc">Not a sales call. A genuine diagnosis. I'll look at your current Notion workspace and tell you the three things that would make the biggest difference. You leave with a clear plan whether you buy anything from me or not.</p>
+    <div class="what-happens">
+      <div class="what-item"><div class="what-num">1</div><div class="what-text"><strong>You fill in the form</strong>Tell me what kind of agency you run and where the friction is.</div></div>
+      <div class="what-item"><div class="what-num">2</div><div class="what-text"><strong>I review your setup before the call</strong>Share your Notion link if you have one. I'll come prepared with specific observations.</div></div>
+      <div class="what-item"><div class="what-num">3</div><div class="what-text"><strong>20 minutes — diagnosis only</strong>I walk you through exactly what I'd change and what the realistic outcome looks like. No filler.</div></div>
+      <div class="what-item"><div class="what-num">4</div><div class="what-text"><strong>You decide what happens next</strong>Buy a template, book a custom build, or just use the advice. All three are equally fine.</div></div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="contact-card">
+      <div class="card-header">
+        <svg viewBox="0 0 420 120" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <line x1="-80" y1="0" x2="20" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="-20" y1="0" x2="80" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="40" y1="0" x2="140" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="100" y1="0" x2="200" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="160" y1="0" x2="260" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="220" y1="0" x2="320" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="280" y1="0" x2="380" y2="120" stroke="#fff" stroke-width="1.5"/>
+          <line x1="340" y1="0" x2="440" y2="120" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+        <div class="card-header-label">Free · 20 minutes</div>
+        <div class="card-header-title">Book your free agency audit</div>
+        <div class="card-acc"></div>
+      </div>
+      <div class="card-body">
+        <div id="form-wrap">
+          <form name="audit-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="form-name" value="audit-request"/>
+            <p style="display:none"><label>Don't fill: <input name="bot-field"/></label></p>
+            <div class="form-group">
+              <label class="form-label" for="name">Your name</label>
+              <input class="form-input" type="text" id="name" name="name" placeholder="Sarah Moran" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Work email</label>
+              <input class="form-input" type="email" id="email" name="email" placeholder="sarah@youragency.com" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="agency">Agency name and size</label>
+              <input class="form-input" type="text" id="agency" name="agency" placeholder="Acme Studio · 8 people" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pain">What is the biggest pain right now?</label>
+              <select class="form-input" id="pain" name="pain" required>
+                <option value="" disabled selected>Choose the main problem</option>
+                <option>Client onboarding takes too long</option>
+                <option>Feedback and revisions are chaotic</option>
+                <option>No visibility across active projects</option>
+                <option>Team capacity is impossible to track</option>
+                <option>Everything lives in different tools</option>
+                <option>Something else</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="context">Anything else I should know? <span style="color:var(--ink-3);font-weight:400">(optional)</span></label>
+              <textarea class="form-input" id="context" name="context" placeholder="Current tools, team structure, specific workflows that aren't working..."></textarea>
+            </div>
+            <button class="form-btn" type="submit">Request my free audit →</button>
+            <p class="form-note">I'll reply within 24 hours to confirm a time.<br/>No sales pitch — just the diagnosis.</p>
+          </form>
+        </div>
+        <div class="success-state" id="success">
+          <div class="success-icon">✓</div>
+          <div class="success-title">Request received</div>
+          <div class="success-desc">I'll be in touch within 24 hours to confirm a time. While you wait — the free onboarding template is a good place to start.</div>
+          <a href="/start" class="success-link">Get the free template</a>
+        </div>
+        <div class="or-divider"><div class="or-line"></div>or email directly<div class="or-line"></div></div>
+        <a href="mailto:hello@notionflow.com" class="direct-email">hello@notionflow.com</a>
+      </div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-title">What to expect</div>
+      <div class="trust-list">
+        <div class="trust-item"><div class="trust-dot"></div>Reply within 24 hours to confirm timing</div>
+        <div class="trust-item"><div class="trust-dot"></div>20 minutes — I stay to the point</div>
+        <div class="trust-item"><div class="trust-dot"></div>Specific, actionable recommendations only</div>
+        <div class="trust-item"><div class="trust-dot"></div>No obligation to buy anything</div>
+        <div class="trust-item"><div class="trust-dot"></div>Most people implement 2–3 changes same day</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="faq-section">
+  <h2 class="faq-title">Common questions</h2>
+  <div class="faq-grid">
+    <div class="faq-item"><div class="faq-q">Is this really free with no catch?</div><div class="faq-a">Yes. I do these calls because they are the best way to understand what agencies actually need. Some people buy a template or custom build after — many don't. Both are fine.</div></div>
+    <div class="faq-item"><div class="faq-q">Do I need to have Notion already?</div><div class="faq-a">No. If you are not using Notion yet, we can discuss whether it is the right fit for your agency and what setup would make sense to start with.</div></div>
+    <div class="faq-item"><div class="faq-q">What if my problems are too simple or too complex?</div><div class="faq-a">There is no such thing in this context. Simple problems get fast solutions. Complex ones get a clear plan of attack. Either way you leave knowing what to do.</div></div>
+    <div class="faq-item"><div class="faq-q">How is this different from a sales call?</div><div class="faq-a">A sales call starts from what I want to sell you. This starts from what your actual problem is. If a free template solves it I will tell you that. If nothing I make is relevant I will tell you that too.</div></div>
+  </div>
+</div>
+
+<div class="cta-strip">
+  <div class="cta-inner">
+    <h2 class="cta-title">Not ready for a call? <em>Start with the free template</em></h2>
+    <p class="cta-sub">The agency onboarding checklist is free, takes 5 minutes to set up, and solves the most common pain immediately.</p>
+    <a href="/start" class="btn-inv">Get the free template</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <ul class="footer-links">
+      <li><a href="/templates">Templates</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/privacy">Privacy</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 NotionFlow</p>
+  </div>
+</footer>
+
+<script>
+document.querySelector('form')?.addEventListener('submit', (e: SubmitEvent) => {
+  e.preventDefault();
+  const form = e.target as HTMLFormElement;
+  const data = new FormData(form);
+  const encoded = Array.from(data.entries())
+    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v as string))
+    .join('&');
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: encoded,
+  })
+    .then(() => {
+      const wrap = document.getElementById('form-wrap');
+      const success = document.getElementById('success');
+      if (wrap) wrap.style.display = 'none';
+      if (success) success.style.display = 'block';
+    })
+    .catch(() => form.submit());
+});
+</script>
+</body>
+</html>

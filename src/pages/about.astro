@@ -1,0 +1,618 @@
+---
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — NotionFlow</title>
+  <meta name="description" content="The story behind NotionFlow — why I build Notion systems for agencies and what I've learned doing it."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #0f0e0d;
+      --ink-2:    #3d3b38;
+      --ink-3:    #7a7772;
+      --paper:    #faf9f7;
+      --paper-2:  #f0ede8;
+      --paper-3:  #e4e0d9;
+      --accent:   #5c4ee8;
+      --accent-2: #ede9ff;
+      --accent-3: #c8c0f8;
+      --teal:     #0d8a6a;
+      --teal-2:   #e0f5ee;
+      --amber:    #b86c10;
+      --amber-2:  #fef0da;
+      --serif:    'DM Serif Display', Georgia, serif;
+      --sans:     'DM Sans', system-ui, sans-serif;
+      --radius:   12px;
+      --radius-lg:20px;
+    }
+
+    body {
+      font-family: var(--sans); background: var(--paper);
+      color: var(--ink); line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem); height: 64px;
+      background: rgba(250,249,247,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--paper-3);
+    }
+    .nav-logo {
+      font-family: var(--serif); font-size: 1.25rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: .875rem; color: var(--ink-2);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: .5rem 1.25rem; border-radius: 8px; font-weight: 500 !important;
+    }
+
+    /* HERO */
+    .hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: clamp(3.5rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem);
+      display: grid; grid-template-columns: 1fr 360px;
+      gap: 5rem; align-items: start;
+    }
+    @media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .hero-eyebrow {
+      font-size: .75rem; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(2.25rem, 5vw, 3.25rem);
+      line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 1.5rem;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-lead {
+      font-size: 1.125rem; color: var(--ink-2);
+      line-height: 1.8; margin-bottom: 2rem;
+    }
+
+    /* AVATAR CARD */
+    .avatar-card {
+      background: #fff; border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg); overflow: hidden;
+      position: sticky; top: 84px;
+    }
+    .avatar-cover {
+      height: 120px; background: var(--accent-2);
+      position: relative; overflow: hidden;
+    }
+    .avatar-cover-deco {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent, transparent 20px,
+        rgba(92,78,232,.08) 20px, rgba(92,78,232,.08) 21px
+      );
+    }
+    .avatar-img {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1.75rem;
+      border: 3px solid var(--paper);
+      position: absolute; bottom: -36px; left: 1.5rem;
+    }
+    .avatar-body { padding: 2.75rem 1.5rem 1.5rem; }
+    .avatar-name {
+      font-family: var(--serif); font-size: 1.25rem;
+      margin-bottom: .25rem;
+    }
+    .avatar-role { font-size: .875rem; color: var(--ink-3); margin-bottom: 1.25rem; }
+    .avatar-divider { height: 1px; background: var(--paper-2); margin: 1.25rem 0; }
+    .avatar-stat-row { display: flex; flex-direction: column; gap: .875rem; }
+    .avatar-stat { display: flex; align-items: center; gap: .75rem; }
+    .avatar-stat-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--paper-2); display: flex;
+      align-items: center; justify-content: center;
+      font-size: .875rem; flex-shrink: 0;
+    }
+    .avatar-stat-label { font-size: .8125rem; color: var(--ink-3); }
+    .avatar-stat-val { font-size: .9375rem; font-weight: 500; }
+    .avatar-links { display: flex; flex-direction: column; gap: .625rem; margin-top: 1.5rem; }
+    .avatar-link {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; padding: .6875rem 1rem; border-radius: 10px;
+      font-size: .875rem; font-weight: 500; text-decoration: none;
+      transition: opacity .15s;
+    }
+    .avatar-link:hover { opacity: .82; }
+    .link-primary { background: var(--accent); color: #fff; }
+    .link-ghost {
+      border: 1px solid var(--paper-3); color: var(--ink-2);
+      background: transparent;
+    }
+    .link-ghost:hover { border-color: var(--accent-3); color: var(--accent); opacity: 1; }
+
+    /* PROSE BODY */
+    .prose-body {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      display: grid; grid-template-columns: 1fr 360px;
+      gap: 5rem;
+    }
+    @media (max-width: 860px) { .prose-body { grid-template-columns: 1fr; } }
+    .prose-col {}
+    .aside-col {}
+
+    .prose h2 {
+      font-family: var(--serif); font-size: 1.625rem;
+      color: var(--ink); margin: 3rem 0 1rem;
+      letter-spacing: -0.01em; line-height: 1.2;
+    }
+    .prose h2:first-child { margin-top: 0; }
+    .prose p {
+      font-size: .9875rem; color: var(--ink-2);
+      line-height: 1.85; margin-bottom: 1.25rem;
+    }
+    .prose strong { color: var(--ink); font-weight: 500; }
+
+    /* PULL QUOTE */
+    .pull-quote {
+      border-left: 3px solid var(--accent);
+      padding: 1rem 0 1rem 1.5rem;
+      margin: 2rem 0;
+    }
+    .pull-quote p {
+      font-family: var(--serif); font-size: 1.25rem;
+      color: var(--ink); line-height: 1.45;
+      font-style: italic; margin: 0;
+    }
+
+    /* TIMELINE */
+    .timeline { position: relative; margin: 2rem 0; }
+    .timeline::before {
+      content: ''; position: absolute;
+      left: 14px; top: 8px; bottom: 8px;
+      width: 1px; background: var(--paper-3);
+    }
+    .tl-item { display: flex; gap: 1.25rem; margin-bottom: 1.75rem; position: relative; }
+    .tl-dot {
+      width: 29px; height: 29px; border-radius: 50%;
+      background: #fff; border: 1px solid var(--paper-3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; z-index: 1;
+    }
+    .tl-dot-inner {
+      width: 9px; height: 9px; border-radius: 50%;
+    }
+    .dot-purple { background: var(--accent); }
+    .dot-teal   { background: var(--teal); }
+    .dot-amber  { background: var(--amber); }
+    .dot-gray   { background: var(--ink-3); }
+    .tl-content {}
+    .tl-year { font-size: .75rem; font-weight: 500; color: var(--ink-3); margin-bottom: .25rem; }
+    .tl-title { font-size: .9875rem; font-weight: 500; color: var(--ink); margin-bottom: .25rem; }
+    .tl-desc { font-size: .875rem; color: var(--ink-3); line-height: 1.6; }
+
+    /* WHAT I BELIEVE */
+    .beliefs { display: flex; flex-direction: column; gap: .875rem; margin: 2rem 0; }
+    .belief {
+      display: flex; gap: 1rem; padding: 1rem 1.125rem;
+      border: 1px solid var(--paper-3); border-radius: var(--radius);
+      background: #fff;
+    }
+    .belief-num {
+      font-family: var(--serif); font-size: 1.125rem;
+      color: var(--accent-3); flex-shrink: 0; line-height: 1.3;
+      width: 24px; text-align: right;
+    }
+    .belief-text { font-size: .9375rem; color: var(--ink-2); line-height: 1.65; }
+    .belief-text strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: .125rem; }
+
+    /* ASIDE CARDS */
+    .aside-card {
+      background: #fff; border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg); padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .aside-title {
+      font-size: .75rem; font-weight: 500; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--ink-3); margin-bottom: 1rem;
+    }
+    .tool-list { display: flex; flex-direction: column; gap: .75rem; }
+    .tool-item { display: flex; align-items: center; gap: .875rem; }
+    .tool-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .875rem; font-weight: 600; flex-shrink: 0;
+    }
+    .ti-notion  { background: var(--ink); color: var(--paper); }
+    .ti-loom    { background: #625DF5; color: #fff; }
+    .ti-gumroad { background: #FF90E8; color: var(--ink); }
+    .ti-figma   { background: #F24E1E; color: #fff; }
+    .ti-astro   { background: #FF5D01; color: #fff; }
+    .tool-name  { font-size: .9375rem; font-weight: 500; }
+    .tool-desc  { font-size: .8125rem; color: var(--ink-3); }
+
+    .faq-list { display: flex; flex-direction: column; gap: .75rem; }
+    .faq-item {}
+    .faq-q {
+      font-size: .9rem; font-weight: 500; color: var(--ink);
+      margin-bottom: .375rem;
+    }
+    .faq-a { font-size: .8375rem; color: var(--ink-3); line-height: 1.6; }
+
+    /* CTA */
+    .cta-strip {
+      background: var(--ink);
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+      margin-top: clamp(3rem, 6vw, 5rem);
+      text-align: center;
+    }
+    .cta-inner { max-width: 560px; margin: 0 auto; }
+    .cta-title {
+      font-family: var(--serif);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      color: var(--paper); line-height: 1.1;
+      letter-spacing: -0.02em; margin-bottom: .875rem;
+    }
+    .cta-title em { font-style: italic; color: var(--accent-3); }
+    .cta-sub {
+      font-size: .9375rem; color: rgba(250,249,247,.6);
+      line-height: 1.7; margin-bottom: 2rem;
+    }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-inv {
+      background: var(--paper); color: var(--ink);
+      padding: .875rem 2rem; border-radius: 10px;
+      font-size: .9375rem; font-weight: 500;
+      text-decoration: none; transition: opacity .15s;
+    }
+    .btn-inv:hover { opacity: .88; }
+    .btn-outline {
+      border: 1px solid rgba(255,255,255,.2); color: var(--paper);
+      padding: .875rem 2rem; border-radius: 10px;
+      font-size: .9375rem; text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,.5); }
+
+    /* FOOTER */
+    footer {
+      background: var(--paper-2); border-top: 1px solid var(--paper-3);
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: var(--serif); font-size: 1.125rem;
+      color: var(--ink); text-decoration: none;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      font-size: .875rem; color: var(--ink-3); text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: .8125rem; color: var(--ink-3); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Notion<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/templates">Templates</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/about" class="active">About</a></li>
+    <li><a href="/templates" class="nav-cta">Browse templates</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <p class="hero-eyebrow">About</p>
+    <h1 class="hero-title">
+      I build Notion systems for agencies that are <em>tired of the chaos</em>
+    </h1>
+    <p class="hero-lead">
+      Every agency I've worked with runs the same playbook: great work, terrible operations.
+      Onboarding in Google Docs, feedback in Slack, status in someone's head.
+      I build the systems that fix that — and then I package them as templates anyone can use.
+    </p>
+  </div>
+
+  <!-- AVATAR CARD -->
+  <div>
+    <div class="avatar-card">
+      <div class="avatar-cover">
+        <div class="avatar-cover-deco"></div>
+        <div class="avatar-img">Y</div>
+      </div>
+      <div class="avatar-body">
+        <div class="avatar-name">Piercel Moussa</div>
+        <div class="avatar-role">Notion systems builder · Agency ops consultant</div>
+        <div class="avatar-divider"></div>
+        <div class="avatar-stat-row">
+          <div class="avatar-stat">
+            <div class="avatar-stat-icon">📍</div>
+            <div>
+              <div class="avatar-stat-label">Based in</div>
+              <div class="avatar-stat-val">Strasbourg, France</div>
+            </div>
+          </div>
+          <div class="avatar-stat">
+            <div class="avatar-stat-icon">🏗</div>
+            <div>
+              <div class="avatar-stat-label">Templates built</div>
+              <div class="avatar-stat-val">12 and counting</div>
+            </div>
+          </div>
+          <div class="avatar-stat">
+            <div class="avatar-stat-icon">🤝</div>
+            <div>
+              <div class="avatar-stat-label">Agencies helped</div>
+              <div class="avatar-stat-val">340+</div>
+            </div>
+          </div>
+        </div>
+        <div class="avatar-links">
+          <a href="https://linkedin.com/in/piercelestinmax" target="_blank" class="avatar-link link-primary">Connect on LinkedIn</a>
+          <a href="mailto:piercel.coder2022@gmail.com" class="avatar-link link-ghost">Send an email</a>
+           <a href="https://www.notion.com/@piercelmoussa" target="_blank" class="avatar-link link-primary">Connect on Notion</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROSE + ASIDE -->
+<div class="prose-body">
+  <div class="prose-col">
+
+    <div class="prose">
+      <h2>Where this started</h2>
+      <p>
+        I spent three years working inside a digital agency. Good work, good clients, genuinely talented team.
+        But the operations were a disaster. Every Monday standup was 45 minutes of catching up on things
+        that should have been visible all week. Every client onboarding was a different improvised process.
+        Every revision request lived in a different Slack thread.
+      </p>
+      <p>
+        I started building Notion systems to fix the specific problems I was watching happen around me.
+        First a client portal that replaced our onboarding process. Then a project tracker that gave
+        our creative director visibility across all active work. Then a feedback log that got revision
+        requests out of email and into something we could actually manage.
+      </p>
+
+      <div class="pull-quote">
+        <p>The work was never the problem. The systems around the work were the problem.</p>
+      </div>
+
+      <p>
+        After leaving the agency I started building these systems for other agencies as a consultant.
+        The same problems kept appearing in every client — different industries, different sizes,
+        same chaos. So I packaged the solutions as templates that any agency could set up themselves
+        in an afternoon rather than paying for a custom build.
+      </p>
+
+      <h2>How I got here</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-inner dot-gray"></div></div>
+        <div class="tl-content">
+          <div class="tl-year">2020</div>
+          <div class="tl-title">Joined a digital agency as operations lead</div>
+          <div class="tl-desc">Responsible for making 40 simultaneous client projects not collapse into chaos. They mostly did anyway.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-inner dot-amber"></div></div>
+        <div class="tl-content">
+          <div class="tl-year">2021</div>
+          <div class="tl-title">Built the first internal Notion system</div>
+          <div class="tl-desc">A client portal that replaced our onboarding process. Monday standup dropped from 45 minutes to 12.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-inner dot-teal"></div></div>
+        <div class="tl-content">
+          <div class="tl-year">2023</div>
+          <div class="tl-title">Started consulting for other agencies</div>
+          <div class="tl-desc">The same five problems kept appearing. Started packaging the solutions into repeatable systems.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-inner dot-purple"></div></div>
+        <div class="tl-content">
+          <div class="tl-year">2025</div>
+          <div class="tl-title">Launched NotionFlow</div>
+          <div class="tl-desc">Packaged the consulting systems as self-serve templates. First sale within 48 hours of going live.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <h2>What I actually believe</h2>
+    </div>
+
+    <div class="beliefs">
+      <div class="belief">
+        <div class="belief-num">01</div>
+        <div class="belief-text">
+          <strong>Operations are a competitive advantage</strong>
+          Agencies with better systems deliver better work, retain better clients, and scale without burning their team out. It's not an admin concern — it's a strategic one.
+        </div>
+      </div>
+      <div class="belief">
+        <div class="belief-num">02</div>
+        <div class="belief-text">
+          <strong>Simple beats sophisticated every time</strong>
+          A system your team actually uses beats a perfect system nobody opens. Every template I build is designed around the minimum structure that solves the problem — not the maximum features I could add.
+        </div>
+      </div>
+      <div class="belief">
+        <div class="belief-num">03</div>
+        <div class="belief-text">
+          <strong>Clients notice when you're organised</strong>
+          A client who logs into a professional portal on day one forms a different impression than one who gets a welcome email with five attachments. The system is part of your product.
+        </div>
+      </div>
+      <div class="belief">
+        <div class="belief-num">04</div>
+        <div class="belief-text">
+          <strong>The tool is rarely the problem</strong>
+          Notion is good. So is ClickUp, Asana, and Linear. What breaks agencies is not the wrong tool — it's no consistent process for using the tool they have. I focus on the process first.
+        </div>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:1rem">
+      <h2>What I can help you with</h2>
+      <p>
+        If you run or work in a digital agency and your operations feel like they're held together
+        with duct tape — <strong>start with the templates</strong>. The client portal in particular
+        solves the most immediate pain: onboarding chaos and the "just checking in" email cycle.
+        Most people have it running within an afternoon.
+      </p>
+      <p>
+        If your situation is more complex — multiple teams, unusual workflows, specific integrations
+        you need — I offer done-for-you Notion builds. We start with a free 20-minute audit call
+        where I look at your current setup and tell you exactly where the bottlenecks are.
+        No sales pitch, just a diagnosis.
+      </p>
+      <p>
+        And if you want to follow the thinking behind the systems — the blog covers case studies,
+        operational breakdowns, and honest takes on what works and what doesn't in agency ops.
+        One post per week, no filler.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ASIDE -->
+  <div class="aside-col">
+
+    <div class="aside-card">
+      <div class="aside-title">Tools I use every day</div>
+      <div class="tool-list">
+        <div class="tool-item">
+          <div class="tool-icon ti-notion">N</div>
+          <div>
+            <div class="tool-name">Notion</div>
+            <div class="tool-desc">Everything. It is the product.</div>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon ti-loom">L</div>
+          <div>
+            <div class="tool-name">Loom</div>
+            <div class="tool-desc">Template walkthroughs and demos.</div>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon ti-gumroad">G</div>
+          <div>
+            <div class="tool-name">Gumroad</div>
+            <div class="tool-desc">Selling and delivering templates.</div>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon ti-figma">F</div>
+          <div>
+            <div class="tool-name">Figma</div>
+            <div class="tool-desc">Design before I build in Notion.</div>
+          </div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-icon ti-astro">A</div>
+          <div>
+            <div class="tool-name">Astro</div>
+            <div class="tool-desc">This website, deployed on Netlify.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-card">
+      <div class="aside-title">Common questions</div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">Do I need to know Notion well to use your templates?</div>
+          <div class="faq-a">No. Every template includes a Loom walkthrough and setup guide. If you can duplicate a Notion page, you can use them.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do you offer refunds?</div>
+          <div class="faq-a">Yes — 30-day guarantee, no questions asked. If you set it up and it genuinely doesn't deliver value, email me.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can I use the templates with multiple clients?</div>
+          <div class="faq-a">Absolutely. You buy once and duplicate as many times as you need. That's the whole point.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do you do custom Notion builds?</div>
+          <div class="faq-a">Yes, for agencies whose needs go beyond what the templates cover. Start with a free audit call.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-card" style="background:var(--accent-2); border-color:var(--accent-3)">
+      <div class="aside-title" style="color:var(--accent)">Work with me directly</div>
+      <p style="font-size:.9rem;color:var(--ink-2);line-height:1.65;margin-bottom:1.25rem">
+        If the templates don't fully cover your situation, book a free 20-minute audit. I'll look at your current setup and tell you exactly what to fix — whether that's a template, a custom build, or something else entirely.
+      </p>
+      <a href="mailto:hello@notionflow.com"
+         style="display:block;text-align:center;background:var(--accent);color:#fff;padding:.75rem 1rem;border-radius:10px;font-size:.9rem;font-weight:500;text-decoration:none;">
+        Book a free audit
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <div class="cta-inner">
+    <h2 class="cta-title">Ready to fix your <em>operations</em>?</h2>
+    <p class="cta-sub">Browse the template library and pick the one that solves your most immediate pain. You can have it running before end of day.</p>
+    <div class="cta-actions">
+      <a href="/templates" class="btn-inv">Browse templates</a>
+      <a href="/blog" class="btn-outline">Read the blog</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <ul class="footer-links">
+      <li><a href="/templates">Templates</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 NotionFlow</p>
+  </div>
+</footer>
+
+</body>
+</html>
