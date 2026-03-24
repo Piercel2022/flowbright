@@ -1,32 +1,77 @@
 ---
-title: "How we cut client onboarding from 4 hours to 45 minutes"
-description: "A step-by-step breakdown of the Notion system a 10-person marketing agency used to transform their onboarding process — and what you can steal from it."
+title: How we cut client onboarding from 4 hours to 45 minutes
+description: A step-by-step breakdown of the Notion system a 10-person marketing agency used to transform their onboarding process — and what you can steal from it.
 pubDate: 2026-03-18
-tags: ["Case study", "Onboarding", "Agency ops"]
+tags:
+  - Case study
+  - Onboarding
+  - Agency ops
+cover: /images/onboarding.jpg
 ---
 
-A 10-person marketing agency was losing half a day every time they signed a new client.
+Most agencies don't have an onboarding problem. They have a systems problem. The chaos you feel every time a new client signs — the back-and-forth emails, the repeated explanations, the manually created folders — is a symptom of building the same thing from scratch every single time.
 
-Not because the work was complicated. Because the process lived in six different places — a Google Drive folder nobody could find, a Slack channel that got archived, an email thread from three months ago, and someone's personal task list. Every account manager had their own version of "the onboarding checklist." Nothing was consistent. Clients kept asking the same questions because nothing was ever centralised.
+This is the story of how a 10-person marketing agency fixed that in a single afternoon.
 
-## What we built
+## The before: 4 hours of invisible work
 
-The fix was a single Notion client portal duplicated for every new client. Five linked databases, one shared workspace, one link sent to the client on day one.
+Before they changed anything, onboarding a new client looked like this:
 
-The core is a project tracker with three views: a Kanban for the internal team, a filtered table for the client showing only what they need to see, and a timeline for milestone planning. Every task has a status, an owner, and a due date. The client can check progress at any moment without sending an email.
+- Send a welcome email (written from memory, slightly different every time)
+- Create a shared Google Drive folder and manually add the client
+- Set up a Slack channel, invite the team, pin the brief
+- Copy last month's project tracker into a new sheet and rename everything
+- Schedule a kickoff call, send a calendar invite, write the agenda
+- Brief the team in a separate internal meeting
 
-The feedback log replaced their revision request process entirely. Instead of "can you check the latest comments in the doc I sent on Tuesday," every revision request is a database entry linked to the specific deliverable it relates to, with a status that moves from Open to In Progress to Resolved. Nothing gets lost.
+Four hours. Every single client. And that's assuming nothing went wrong.
+
+The real cost wasn't just time — it was the cognitive load. Someone senior had to own the process, which meant pulling a director or account lead away from billable work every time a contract was signed.
+
+## The fix: one Notion workspace, three linked databases
+
+The solution wasn't a fancier tool. It was building a replicable system inside a tool they already used.
+
+The agency built a Notion workspace with three core databases:
+
+**1. Client Hub** — one page per client, with contact info, contract details, key dates, and a status field that drives everything else. When a new client is added here, it triggers the rest of the system.
+
+**2. Onboarding Checklist** — a task database filtered by client. Every new client automatically gets the same 22-step checklist: from sending the welcome pack to scheduling the 30-day check-in. Each task has an owner, a due date, and a status. Nothing falls through the cracks because nothing relies on memory.
+
+**3. Shared Client Portal** — a filtered view of the workspace that the client actually sees. They get their deliverables, meeting notes, and project updates in one place. No more "where's that document?" emails.
+
+## The rollout
+
+They didn't migrate everything overnight. Week one, they built the template. Week two, they ran one real client through it and noted everything that broke. Week three, they fixed it and ran another. By week four, the whole team was using it without being asked.
+
+The key decision: they made the system the path of least resistance. The old way — starting from scratch — was harder than using the template. That's when adoption happens.
 
 ## The result
 
-Onboarding dropped from a four-hour scramble spread across a week to a 45-minute structured process on day one. The account manager walks the client through the portal on the kickoff call, shares the link, and that's it. The client has everything they need. The agency has everything documented.
+Onboarding time dropped from four hours to 45 minutes. The 45 minutes that remain are the parts that should require human judgment: the kickoff call, the strategic brief, the relationship.
 
-Their ops lead told me the Monday standup went from 45 minutes to 12. The creative director stopped being the single point of failure for knowing what was happening on each account.
+Everything else — the admin, the setup, the communication — runs itself.
 
-## What you can take from this
+Three other things changed that they didn't expect:
 
-The system works because it reduces the number of places information lives from six to one. Every question a client might send — where are we, where's that file, what's the status of my feedback — has a permanent answer that doesn't require anyone to respond.
+**Client satisfaction went up.** A structured, professional onboarding experience signals competence before a single deliverable is produced. Clients felt taken care of from day one.
 
-If your onboarding still involves sending a welcome email and hoping the client reads it, you're one duplicated Notion portal away from something significantly better.
+**Junior staff could run onboarding.** Because the system was explicit, it didn't require senior judgment to execute. That freed up director time for work that actually needed it.
 
+**Mistakes dropped to near zero.** When you follow a checklist, you don't forget to add the client to the project management tool. You don't send the wrong welcome email. The system catches what memory doesn't.
 
+## What you can steal
+
+You don't need to copy this system exactly. But here's the underlying logic you can apply to your own agency:
+
+1. **Map your current process honestly.** Write down every step you take when a new client signs, including the ones that happen in your head. You'll probably find 30–40% of them can be templated immediately.
+
+2. **Build for the worst day, not the best.** Your system needs to work when you're busy, distracted, or handing off to someone new. If it only works when you have time to think, it's not a system.
+
+3. **Make the template easier than the blank page.** Adoption fails when using the system feels like extra work. If your team keeps improvising, the template isn't saving them enough time yet.
+
+4. **Start with onboarding, then expand.** Onboarding is painful enough to motivate change, contained enough to build quickly, and frequent enough to validate fast. Get this right, then apply the same logic to offboarding, project delivery, and reporting.
+
+The agencies that scale aren't the ones with the best creative. They're the ones who figured out how to deliver consistently without burning their team out.
+
+A 45-minute onboarding process is a good place to start.
