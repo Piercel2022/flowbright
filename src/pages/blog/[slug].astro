@@ -2,56 +2,25 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-function entrySlug(entry: CollectionEntry<'templates'>): string {
-  return String(entry.id).replace(/\.mdx?$/, '');
-}
-
 export async function getStaticPaths() {
-  let templates: CollectionEntry<'templates'>[] = [];
-  try { templates = await getCollection('templates'); } catch (e) {
-    console.error('[templates] getStaticPaths error:', e);
-  }
-  console.log('[templates] entries:', templates.map(t => ({ id: t.id, type: typeof t.id })));
-  return templates
-    .map(t => {
-      const slug = String(t.id).replace(/\.mdx?$/, '');
-      console.log('[templates] mapping id:', t.id, '→ slug:', slug);
-      return { params: { slug }, props: { template: t } };
-    })
-    .filter(entry => entry.params.slug && entry.params.slug.length > 0);
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
 }
 
 interface Props {
-  template: CollectionEntry<'templates'>;
+  post: CollectionEntry<'blog'>;
 }
 
-const { template } = Astro.props as Props;
+const { post } = Astro.props;
+const { Content } = await render(post);
 
-let Content: any = null;
-if (template) {
-  const rendered = await render(template);
-  Content = rendered.Content;
-}
-
-let allTemplates: CollectionEntry<'templates'>[] = [];
-try { allTemplates = await getCollection('templates'); } catch {}
-
-const related = allTemplates
-  .filter(t => entrySlug(t) !== entrySlug(template) && t.data.category === template?.data?.category)
-  .slice(0, 2);
-
-const fallback = {
-  title: 'Agency client portal',
-  description: 'Replace client onboarding chaos with a professional Notion workspace. Set up in 15 minutes, share with your first client today.',
-  price: 49,
-  category: 'Agency',
-  gumroadUrl: 'https://gumroad.com',
-  featured: true,
-  cover: '',
-  tags: ['agency', 'client management', 'onboarding'],
-};
-
-const data = template?.data ?? fallback;
+const { title, description, pubDate, tags, cover } = post.data;
+const formattedDate = new Date(pubDate).toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric'
+});
 ---
 
 <!DOCTYPE html>
@@ -59,371 +28,68 @@ const data = template?.data ?? fallback;
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{data.title} — NotionFlow</title>
-  <meta name="description" content={data.description}/>
+  <title>{title} — NotionFlow</title>
+  <meta name="description" content={description}/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --ink:       #0f0e0d;
-      --ink-2:     #3d3b38;
-      --ink-3:     #7a7772;
-      --paper:     #faf9f7;
-      --paper-2:   #f0ede8;
-      --paper-3:   #e4e0d9;
-      --accent:    #5c4ee8;
-      --accent-2:  #ede9ff;
-      --accent-3:  #c8c0f8;
-      --teal:      #0d8a6a;
-      --teal-2:    #e0f5ee;
-      --serif:     'DM Serif Display', Georgia, serif;
-      --sans:      'DM Sans', system-ui, sans-serif;
-      --radius:    12px;
-      --radius-lg: 20px;
+      --ink: #0f0e0d; --ink-2: #3d3b38; --ink-3: #7a7772;
+      --paper: #faf9f7; --paper-2: #f0ede8; --paper-3: #e4e0d9;
+      --accent: #5c4ee8; --accent-2: #ede9ff; --accent-3: #c8c0f8;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --radius: 12px;
     }
+    body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; }
 
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--sans);
-      background: var(--paper);
-      color: var(--ink);
-      line-height: 1.6;
-    }
-
-    /* NAV */
     nav {
       position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 clamp(1.5rem, 5vw, 4rem);
-      height: 64px;
-      background: rgba(250,249,247,.88);
-      backdrop-filter: blur(12px);
+      padding: 0 clamp(1.5rem, 5vw, 4rem); height: 64px;
+      background: rgba(250,249,247,.88); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--paper-3);
     }
-    .nav-logo {
-      font-family: var(--serif); font-size: 1.25rem;
-      color: var(--ink); text-decoration: none;
-    }
+    .nav-logo { font-family: var(--serif); font-size: 1.25rem; color: var(--ink); text-decoration: none; }
     .nav-logo span { color: var(--accent); }
     .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: .875rem; color: var(--ink-2);
-      text-decoration: none; transition: color .15s;
-    }
-    .nav-links a:hover { color: var(--accent); }
-    .nav-cta {
-      background: var(--accent); color: #fff !important;
-      padding: .5rem 1.25rem; border-radius: 8px; font-weight: 500 !important;
-    }
+    .nav-links a { font-size: .875rem; color: var(--ink-2); text-decoration: none; transition: color .15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: #fff !important; padding: .5rem 1.25rem; border-radius: 8px; font-weight: 500 !important; }
 
-    /* BREADCRUMB */
-    .breadcrumb {
-      max-width: 1100px; margin: 0 auto;
-      padding: 1.25rem clamp(1.5rem, 5vw, 4rem) 0;
-      display: flex; align-items: center; gap: .5rem;
-      font-size: .8125rem; color: var(--ink-3);
-    }
-    .breadcrumb a { color: var(--ink-3); text-decoration: none; }
-    .breadcrumb a:hover { color: var(--accent); }
-    .breadcrumb-sep { opacity: .4; }
+    main { max-width: 720px; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem); }
 
-    /* PRODUCT HERO */
-    .product-hero {
-      max-width: 1100px; margin: 0 auto;
-      padding: 2rem clamp(1.5rem, 5vw, 4rem) 4rem;
-      display: grid; grid-template-columns: 1fr 380px;
-      gap: 4rem; align-items: start;
-    }
-    @media (max-width: 900px) { .product-hero { grid-template-columns: 1fr; } }
+    .back-link { display: inline-flex; align-items: center; gap: .375rem; font-size: .875rem; color: var(--ink-3); text-decoration: none; margin-bottom: 2rem; transition: color .15s; }
+    .back-link:hover { color: var(--accent); }
 
-    /* LEFT COLUMN */
-    .product-cat {
-      font-size: .75rem; font-weight: 500; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: .875rem;
-    }
-    .product-title {
-      font-family: var(--serif);
-      font-size: clamp(2rem, 5vw, 3rem);
-      line-height: 1.08; letter-spacing: -0.02em;
-      margin-bottom: 1.25rem;
-    }
-    .product-desc {
-      font-size: 1.0625rem; color: var(--ink-2);
-      line-height: 1.75; margin-bottom: 2rem; max-width: 560px;
-    }
+    .post-cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: var(--radius); margin-bottom: 2.5rem; display: block; }
 
-    /* TAGS */
-    .tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-    .tag {
-      font-size: .75rem; font-weight: 500; padding: .3125rem .75rem;
-      border-radius: 100px; background: var(--paper-2);
-      color: var(--ink-2); border: 1px solid var(--paper-3);
-    }
+    .post-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .post-tag { font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-2); padding: .25rem .625rem; border-radius: 100px; }
 
-    /* PREVIEW */
-    .preview-label {
-      font-size: .75rem; font-weight: 500; letter-spacing: .06em;
-      text-transform: uppercase; color: var(--ink-3);
-      margin-bottom: .875rem;
-    }
-    .preview-wrap {
-      border: 1px solid var(--paper-3); border-radius: var(--radius-lg);
-      overflow: hidden; background: #fff;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,.04);
-    }
-    .preview-topbar {
-      background: var(--paper); border-bottom: 1px solid var(--paper-3);
-      padding: .75rem 1rem; display: flex; align-items: center; gap: .5rem;
-    }
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot-r { background: #ff6059; }
-    .dot-y { background: #ffbd2e; }
-    .dot-g { background: #28ca41; }
-    .preview-url {
-      flex: 1; background: var(--paper-2); border-radius: 5px;
-      padding: .25rem .75rem; font-size: .75rem;
-      color: var(--ink-3); font-family: monospace;
-    }
-    .preview-tabs {
-      display: flex; border-bottom: 1px solid var(--paper-3);
-      padding: 0 1rem; gap: .25rem;
-    }
-    .ptab {
-      font-size: .8125rem; padding: .625rem .875rem;
-      cursor: pointer; color: var(--ink-3);
-      border-bottom: 2px solid transparent;
-      transition: all .15s;
-    }
-    .ptab.active { color: var(--ink); border-bottom-color: var(--accent); }
-    .preview-body { padding: 1.25rem; }
+    .post-title { font-family: var(--serif); font-size: clamp(1.75rem, 4vw, 2.75rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .post-meta { font-size: .875rem; color: var(--ink-3); margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--paper-3); }
 
-    /* Portal preview content */
-    .portal-hero-bar {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 1rem;
-    }
-    .portal-client-name { font-family: var(--serif); font-size: 1.0625rem; }
-    .status-pill {
-      font-size: .6875rem; font-weight: 500; padding: .25rem .625rem;
-      border-radius: 100px; background: var(--teal-2); color: var(--teal);
-    }
-    .chips-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .mini-chip {
-      font-size: .6875rem; font-weight: 500; padding: .25rem .625rem;
-      border-radius: 100px;
-    }
-    .chip-a { background: var(--accent-2); color: var(--accent); }
-    .chip-b { background: var(--amber-2, #fef0da); color: var(--amber, #b86c10); }
-    .prog-wrap { margin-bottom: 1rem; }
-    .prog-label { display: flex; justify-content: space-between; font-size: .75rem; color: var(--ink-3); margin-bottom: .375rem; }
-    .prog-track { height: 5px; background: var(--paper-2); border-radius: 3px; overflow: hidden; }
-    .prog-fill { height: 100%; border-radius: 3px; background: var(--accent); }
-    .task-list { display: flex; flex-direction: column; gap: .5rem; }
-    .task-row { display: flex; align-items: center; gap: .625rem; font-size: .8125rem; color: var(--ink-2); }
-    .tdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .td-done { background: var(--teal); }
-    .td-prog { background: var(--accent); }
-    .td-todo { background: var(--paper-3); }
-    .task-name { flex: 1; }
-    .task-badge { font-size: .6875rem; padding: .125rem .5rem; border-radius: 100px; }
-    .tb-done { background: var(--teal-2); color: var(--teal); }
-    .tb-prog { background: var(--accent-2); color: var(--accent); }
+    .content { line-height: 1.85; }
+    .content h2 { font-family: var(--serif); font-size: 1.625rem; margin: 2.5rem 0 .875rem; letter-spacing: -0.01em; }
+    .content h3 { font-family: var(--serif); font-size: 1.25rem; margin: 2rem 0 .625rem; }
+    .content p { margin-bottom: 1.25rem; color: var(--ink-2); font-size: 1.0625rem; }
+    .content ul, .content ol { padding-left: 1.5rem; margin-bottom: 1.25rem; color: var(--ink-2); font-size: 1.0625rem; }
+    .content li { margin-bottom: .5rem; }
+    .content strong { color: var(--ink); }
+    .content a { color: var(--accent); }
+    .content blockquote { border-left: 3px solid var(--accent-3); padding: .75rem 1.25rem; margin: 1.5rem 0; background: var(--accent-2); border-radius: 0 var(--radius) var(--radius) 0; }
+    .content blockquote p { margin: 0; color: var(--ink-2); }
+    .content code { background: var(--paper-2); padding: .125rem .375rem; border-radius: 4px; font-size: .875em; }
+    .content pre { background: var(--ink); color: var(--paper); padding: 1.25rem; border-radius: var(--radius); overflow-x: auto; margin-bottom: 1.25rem; }
+    .content pre code { background: none; padding: 0; }
+    .content img { max-width: 100%; border-radius: var(--radius); margin: 1.5rem 0; }
 
-    /* WHAT'S INCLUDED */
-    .includes-section { margin-top: 3rem; }
-    .includes-title {
-      font-family: var(--serif); font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .includes-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: .875rem; margin-bottom: 2.5rem;
-    }
-    @media (max-width: 600px) { .includes-grid { grid-template-columns: 1fr; } }
-    .include-item {
-      display: flex; align-items: flex-start; gap: .75rem;
-      padding: .875rem 1rem; border: 1px solid var(--paper-3);
-      border-radius: var(--radius); background: #fff;
-    }
-    .include-icon {
-      width: 30px; height: 30px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .8125rem; font-weight: 600; flex-shrink: 0;
-    }
-    .ii-purple { background: var(--accent-2); color: var(--accent); }
-    .ii-teal { background: var(--teal-2); color: var(--teal); }
-    .ii-amber { background: #fef0da; color: #b86c10; }
-    .ii-gray { background: var(--paper-2); color: var(--ink-3); }
-    .include-text {}
-    .include-name { font-size: .9375rem; font-weight: 500; margin-bottom: .125rem; }
-    .include-desc { font-size: .8125rem; color: var(--ink-3); line-height: 1.5; }
-
-    /* BONUS ASSETS */
-    .bonus-list { display: flex; flex-direction: column; gap: .625rem; margin-bottom: 2.5rem; }
-    .bonus-item {
-      display: flex; align-items: center; gap: .75rem;
-      font-size: .9375rem; color: var(--ink-2);
-    }
-    .bonus-check {
-      width: 20px; height: 20px; border-radius: 6px;
-      background: var(--teal-2); color: var(--teal);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .75rem; flex-shrink: 0;
-    }
-
-    /* PROSE CONTENT from MD */
-    .prose { line-height: 1.8; color: var(--ink-2); }
-    .prose h2 {
-      font-family: var(--serif); font-size: 1.625rem;
-      color: var(--ink); margin: 2.5rem 0 1rem;
-      letter-spacing: -0.01em;
-    }
-    .prose h3 {
-      font-size: 1.0625rem; font-weight: 500;
-      color: var(--ink); margin: 1.75rem 0 .625rem;
-    }
-    .prose p { margin-bottom: 1.25rem; font-size: .9875rem; }
-    .prose ul { padding-left: 1.25rem; margin-bottom: 1.25rem; }
-    .prose li { margin-bottom: .375rem; font-size: .9875rem; }
-    .prose strong { color: var(--ink); font-weight: 500; }
-
-    /* RIGHT COLUMN — STICKY PURCHASE CARD */
-    .purchase-card {
-      background: #fff; border: 1px solid var(--paper-3);
-      border-radius: var(--radius-lg); padding: 1.75rem;
-      position: sticky; top: 80px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,.04);
-    }
-    .price-row {
-      display: flex; align-items: baseline; gap: .75rem;
-      margin-bottom: 1.5rem;
-    }
-    .price-main {
-      font-family: var(--serif); font-size: 2.25rem;
-      color: var(--ink); line-height: 1;
-    }
-    .price-was {
-      font-size: .9375rem; color: var(--ink-3);
-      text-decoration: line-through;
-    }
-    .price-save {
-      font-size: .75rem; font-weight: 500;
-      background: var(--teal-2); color: var(--teal);
-      padding: .25rem .625rem; border-radius: 100px;
-    }
-    .btn-buy {
-      display: block; width: 100%;
-      background: var(--accent); color: #fff;
-      padding: 1rem; border-radius: 10px;
-      font-size: 1rem; font-weight: 500;
-      text-align: center; text-decoration: none;
-      transition: opacity .15s; margin-bottom: 1rem;
-    }
-    .btn-buy:hover { opacity: .88; }
-    .btn-preview {
-      display: block; width: 100%;
-      border: 1px solid var(--paper-3); color: var(--ink-2);
-      padding: .875rem; border-radius: 10px;
-      font-size: .9375rem; text-align: center;
-      text-decoration: none; transition: border-color .15s;
-      margin-bottom: 1.5rem;
-    }
-    .btn-preview:hover { border-color: var(--accent-3); color: var(--accent); }
-
-    .card-divider { height: 1px; background: var(--paper-2); margin: 1.25rem 0; }
-
-    .card-features { display: flex; flex-direction: column; gap: .75rem; }
-    .card-feature {
-      display: flex; align-items: flex-start; gap: .75rem;
-      font-size: .875rem; color: var(--ink-2);
-    }
-    .cf-icon {
-      width: 18px; height: 18px; border-radius: 5px;
-      background: var(--teal-2); color: var(--teal);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .625rem; flex-shrink: 0; margin-top: .1rem;
-    }
-
-    .card-divider2 { height: 1px; background: var(--paper-2); margin: 1.5rem 0; }
-
-    .card-guarantee {
-      background: var(--paper); border-radius: var(--radius);
-      padding: 1rem 1.125rem;
-      font-size: .8125rem; color: var(--ink-3); line-height: 1.6;
-    }
-    .card-guarantee strong { color: var(--ink-2); font-weight: 500; }
-
-    /* SETUP STEPS inside card */
-    .setup-steps { display: flex; flex-direction: column; gap: .625rem; margin-top: 1.25rem; }
-    .setup-step {
-      display: flex; align-items: flex-start; gap: .75rem;
-      font-size: .8125rem; color: var(--ink-3);
-    }
-    .step-n {
-      width: 20px; height: 20px; border-radius: 6px;
-      background: var(--accent-2); color: var(--accent);
-      font-size: .6875rem; font-weight: 500;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* SOCIAL PROOF */
-    .reviews-section { margin-top: 3rem; }
-    .reviews-title { font-family: var(--serif); font-size: 1.5rem; margin-bottom: 1.5rem; }
-    .review-cards { display: flex; flex-direction: column; gap: 1rem; }
-    .review-card {
-      padding: 1.25rem; border: 1px solid var(--paper-3);
-      border-radius: var(--radius); background: #fff;
-    }
-    .review-top { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; }
-    .review-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--accent); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--serif); font-size: .9375rem; flex-shrink: 0;
-    }
-    .review-name { font-weight: 500; font-size: .9375rem; }
-    .review-role { font-size: .8125rem; color: var(--ink-3); }
-    .review-stars { color: #f59e0b; font-size: .875rem; margin-left: auto; }
-    .review-text { font-size: .9375rem; color: var(--ink-2); line-height: 1.65; }
-
-    /* RELATED */
-    .related-section {
-      border-top: 1px solid var(--paper-3);
-      padding: 4rem clamp(1.5rem, 5vw, 4rem);
-    }
-    .related-inner { max-width: 1100px; margin: 0 auto; }
-    .related-title { font-family: var(--serif); font-size: 1.75rem; margin-bottom: 2rem; }
-    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
-    .related-card {
-      border: 1px solid var(--paper-3); border-radius: var(--radius-lg);
-      overflow: hidden; text-decoration: none; color: inherit;
-      background: #fff; transition: transform .2s, box-shadow .2s;
-    }
-    .related-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -4px rgba(0,0,0,.08); }
-    .related-cover { height: 120px; background: var(--accent-2); }
-    .related-body { padding: 1rem; }
-    .related-name { font-family: var(--serif); font-size: 1rem; margin-bottom: .375rem; }
-    .related-price { font-size: .9375rem; font-weight: 500; color: var(--accent); }
-
-    /* FOOTER */
-    footer {
-      background: var(--paper-2); border-top: 1px solid var(--paper-3);
-      padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
-    }
-    .footer-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-logo {
-      font-family: var(--serif); font-size: 1.125rem;
-      color: var(--ink); text-decoration: none;
-    }
+    footer { background: var(--paper-2); border-top: 1px solid var(--paper-3); padding: 2.5rem clamp(1.5rem, 5vw, 4rem); margin-top: 5rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: var(--serif); font-size: 1.125rem; color: var(--ink); text-decoration: none; }
     .footer-logo span { color: var(--accent); }
     .footer-links { display: flex; gap: 1.5rem; list-style: none; }
     .footer-links a { font-size: .875rem; color: var(--ink-3); text-decoration: none; }
@@ -433,307 +99,48 @@ const data = template?.data ?? fallback;
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">Notion<span>Flow</span></a>
   <ul class="nav-links">
     <li><a href="/templates">Templates</a></li>
-    <li><a href="/blog">Blog</a></li>
+    <li><a href="/blog" class="active">Blog</a></li>
     <li><a href="/about">About</a></li>
-    <li><a href={data.gumroadUrl} class="nav-cta" target="_blank">Buy — €{data.price}</a></li>
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="/templates" class="nav-cta">Browse templates</a></li>
   </ul>
 </nav>
 
-<!-- BREADCRUMB -->
-<div class="breadcrumb">
-  <a href="/">Home</a>
-  <span class="breadcrumb-sep">›</span>
-  <a href="/templates">Templates</a>
-  <span class="breadcrumb-sep">›</span>
-  <span>{data.title}</span>
-</div>
+<main>
+  <a href="/blog" class="back-link">← Back to blog</a>
 
-<!-- PRODUCT HERO -->
-<div class="product-hero">
+  {cover ? <img src={cover} alt={title} class="post-cover" /> : null}
 
-  <!-- LEFT -->
-  <div class="product-left">
-    <div class="product-cat">{data.category}</div>
-    <h1 class="product-title">{data.title}</h1>
-    <p class="product-desc">{data.description}</p>
-
-    <div class="tags">
-      {data.tags.map(tag => <span class="tag">{tag}</span>)}
+  {tags && tags.length > 0 ? (
+    <div class="post-tags">
+      {tags.map(tag => <span class="post-tag">{tag}</span>)}
     </div>
+  ) : null}
 
-    <!-- Live preview mockup -->
-    <div class="preview-label">Live preview</div>
-    <div class="preview-wrap">
-      <div class="preview-topbar">
-        <div class="dot dot-r"></div>
-        <div class="dot dot-y"></div>
-        <div class="dot dot-g"></div>
-        <div class="preview-url">notion.so/your-agency/client-portal</div>
-      </div>
-      <div class="preview-tabs">
-        <div class="ptab active" onclick="switchTab(this,'overview')">Overview</div>
-        <div class="ptab" onclick="switchTab(this,'tasks')">Project tracker</div>
-        <div class="ptab" onclick="switchTab(this,'feedback')">Feedback log</div>
-      </div>
-      <div class="preview-body">
-        <div id="tab-overview">
-          <div class="portal-hero-bar">
-            <div class="portal-client-name">Brightwave Inc. — Brand Refresh</div>
-            <div class="status-pill">On track</div>
-          </div>
-          <div class="chips-row">
-            <div class="mini-chip chip-a">4 open tasks</div>
-            <div class="mini-chip chip-b">2 awaiting approval</div>
-          </div>
-          <div class="prog-wrap">
-            <div class="prog-label"><span>Overall progress</span><span>60%</span></div>
-            <div class="prog-track"><div class="prog-fill" style="width:60%"></div></div>
-          </div>
-          <div class="task-list">
-            <div class="task-row"><div class="tdot td-done"></div><span class="task-name">Discovery workshop</span><span class="task-badge tb-done">Done</span></div>
-            <div class="task-row"><div class="tdot td-prog"></div><span class="task-name">Logo concepts — round 1</span><span class="task-badge tb-prog">In progress</span></div>
-            <div class="task-row"><div class="tdot td-todo"></div><span class="task-name">Brand guidelines</span><span style="font-size:.6875rem;color:var(--ink-3)">Due Apr 5</span></div>
-          </div>
-        </div>
-        <div id="tab-tasks" style="display:none">
-          <div class="task-list">
-            <div class="task-row"><div class="tdot td-done"></div><span class="task-name">Brand discovery workshop</span><span class="task-badge tb-done">Done</span></div>
-            <div class="task-row"><div class="tdot td-done"></div><span class="task-name">Competitor audit</span><span class="task-badge tb-done">Done</span></div>
-            <div class="task-row"><div class="tdot td-prog"></div><span class="task-name">Logo concepts — round 1</span><span class="task-badge tb-prog">In progress</span></div>
-            <div class="task-row"><div class="tdot td-todo"></div><span class="task-name">Colour palette proposal</span><span style="font-size:.6875rem;color:var(--ink-3)">Due Mar 24</span></div>
-            <div class="task-row"><div class="tdot td-todo"></div><span class="task-name">Typography system</span><span style="font-size:.6875rem;color:var(--ink-3)">Due Mar 28</span></div>
-            <div class="task-row"><div class="tdot td-todo"></div><span class="task-name">Brand guidelines document</span><span style="font-size:.6875rem;color:var(--ink-3)">Due Apr 5</span></div>
-          </div>
-        </div>
-        <div id="tab-feedback" style="display:none">
-          <div class="task-list">
-            <div class="task-row" style="align-items:flex-start;flex-direction:column;gap:.25rem;padding:.625rem 0;border-bottom:1px solid var(--paper-2)">
-              <div style="display:flex;align-items:center;gap:.5rem;width:100%">
-                <div class="mini-chip chip-a" style="font-size:.625rem">Open</div>
-                <span style="font-size:.875rem;font-weight:500">Typography heading weight</span>
-              </div>
-              <span style="font-size:.8125rem;color:var(--ink-3)">H1 feels too light — can we see a 600 weight version?</span>
-            </div>
-            <div class="task-row" style="align-items:flex-start;flex-direction:column;gap:.25rem;padding:.625rem 0;border-bottom:1px solid var(--paper-2)">
-              <div style="display:flex;align-items:center;gap:.5rem;width:100%">
-                <div class="mini-chip" style="background:#fef0da;color:#b86c10;font-size:.625rem">In progress</div>
-                <span style="font-size:.875rem;font-weight:500">Logo wordmark spacing</span>
-              </div>
-              <span style="font-size:.8125rem;color:var(--ink-3)">Kerning between Bright/wave feels uneven at small sizes.</span>
-            </div>
-            <div class="task-row" style="align-items:flex-start;flex-direction:column;gap:.25rem;padding:.625rem 0">
-              <div style="display:flex;align-items:center;gap:.5rem;width:100%">
-                <div class="mini-chip tb-done" style="font-size:.625rem">Resolved</div>
-                <span style="font-size:.875rem;font-weight:500">Colour palette — mobile contrast</span>
-              </div>
-              <span style="font-size:.8125rem;color:var(--ink-3)">Navy too heavy on mobile. Fixed with lighter tint.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <h1 class="post-title">{title}</h1>
+  <p class="post-meta">{formattedDate}</p>
 
-    <!-- What's included -->
-    <div class="includes-section">
-      <div class="includes-title">What's included</div>
-      <div class="includes-grid">
-        <div class="include-item">
-          <div class="include-icon ii-purple">T</div>
-          <div class="include-text">
-            <div class="include-name">Project tracker</div>
-            <div class="include-desc">Kanban, table, and timeline views with task status, owner, and due date.</div>
-          </div>
-        </div>
-        <div class="include-item">
-          <div class="include-icon ii-teal">F</div>
-          <div class="include-text">
-            <div class="include-name">Feedback log</div>
-            <div class="include-desc">Revision requests linked to deliverables. Nothing gets lost in Slack again.</div>
-          </div>
-        </div>
-        <div class="include-item">
-          <div class="include-icon ii-amber">D</div>
-          <div class="include-text">
-            <div class="include-name">File library</div>
-            <div class="include-desc">Shared assets, briefs, and approvals. Filtered by type and approval status.</div>
-          </div>
-        </div>
-        <div class="include-item">
-          <div class="include-icon ii-gray">M</div>
-          <div class="include-text">
-            <div class="include-name">Meeting notes</div>
-            <div class="include-desc">Running call log with decisions and action items linked to the task tracker.</div>
-          </div>
-        </div>
-        <div class="include-item">
-          <div class="include-icon ii-purple">R</div>
-          <div class="include-text">
-            <div class="include-name">Roadmap</div>
-            <div class="include-desc">Timeline view of project milestones. Clients see the big picture at a glance.</div>
-          </div>
-        </div>
-        <div class="include-item">
-          <div class="include-icon ii-teal">W</div>
-          <div class="include-text">
-            <div class="include-name">Welcome page</div>
-            <div class="include-desc">Branded client-facing homepage with status chips and quick navigation.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="includes-title" style="font-size:1.25rem">Bonus assets</div>
-      <div class="bonus-list">
-        <div class="bonus-item"><div class="bonus-check">✓</div>Loom walkthrough video (8 min) — watch the template being set up for a real client</div>
-        <div class="bonus-item"><div class="bonus-check">✓</div>Setup guide PDF — step-by-step instructions for day one</div>
-        <div class="bonus-item"><div class="bonus-check">✓</div>Customisation checklist — 10 things to change before sharing with your first client</div>
-        <div class="bonus-item"><div class="bonus-check">✓</div>Free lifetime updates — every improvement goes to everyone who's bought it</div>
-        <div class="bonus-item"><div class="bonus-check">✓</div>Email support — setup questions answered within 48 hours</div>
-      </div>
-
-      <!-- Reviews -->
-      <div class="reviews-section">
-        <div class="reviews-title">What agencies say</div>
-        <div class="review-cards">
-          <div class="review-card">
-            <div class="review-top">
-              <div class="review-avatar">S</div>
-              <div>
-                <div class="review-name">Sarah Moran</div>
-                <div class="review-role">Director, Acme Creative Agency</div>
-              </div>
-              <div class="review-stars">★★★★★</div>
-            </div>
-            <div class="review-text">We onboarded three clients in the same week and not one of them emailed asking where their files were. That has never happened before. Worth every cent and then some.</div>
-          </div>
-          <div class="review-card">
-            <div class="review-top">
-              <div class="review-avatar" style="background:var(--teal)">T</div>
-              <div>
-                <div class="review-name">Tom Becker</div>
-                <div class="review-role">Founder, Bright Digital Studio</div>
-              </div>
-              <div class="review-stars">★★★★★</div>
-            </div>
-            <div class="review-text">Setup took 20 minutes. The Loom video makes everything obvious. Our Monday standup went from 45 minutes to 12. I've recommended this to three other agency owners already.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Prose content from Markdown -->
-      {Content && (
-        <div class="prose" style="margin-top:2.5rem">
-          <Content />
-        </div>
-      )}
-    </div>
+  <div class="content">
+    <Content />
   </div>
+</main>
 
-  <!-- RIGHT: PURCHASE CARD -->
-  <div class="product-right">
-    <div class="purchase-card">
-      <div class="price-row">
-        <div class="price-main">€{data.price}</div>
-        <div class="price-was">€{data.price + 26}</div>
-        <div class="price-save">Save €26</div>
-      </div>
-
-      <a href={data.gumroadUrl} class="btn-buy" target="_blank">
-        Buy now — €{data.price}
-      </a>
-      <a href="#preview" class="btn-preview">See full preview</a>
-
-      <div class="card-features">
-        <div class="card-feature">
-          <div class="cf-icon">✓</div>
-          <span>Instant Notion template access</span>
-        </div>
-        <div class="card-feature">
-          <div class="cf-icon">✓</div>
-          <span>5 linked databases, fully configured</span>
-        </div>
-        <div class="card-feature">
-          <div class="cf-icon">✓</div>
-          <span>8-minute setup Loom + PDF guide</span>
-        </div>
-        <div class="card-feature">
-          <div class="cf-icon">✓</div>
-          <span>Lifetime updates included</span>
-        </div>
-        <div class="card-feature">
-          <div class="cf-icon">✓</div>
-          <span>48-hour email support</span>
-        </div>
-      </div>
-
-      <div class="card-divider2"></div>
-
-      <div style="font-size:.8125rem;font-weight:500;color:var(--ink-2);margin-bottom:.875rem">How to get started</div>
-      <div class="setup-steps">
-        <div class="setup-step"><div class="step-n">1</div>Buy and open the Notion link in your email</div>
-        <div class="setup-step"><div class="step-n">2</div>Click "Duplicate" to copy to your workspace</div>
-        <div class="setup-step"><div class="step-n">3</div>Follow the 10-item setup checklist inside</div>
-        <div class="setup-step"><div class="step-n">4</div>Share the portal link with your first client</div>
-      </div>
-
-      <div class="card-divider2"></div>
-
-      <div class="card-guarantee">
-        <strong>30-day guarantee.</strong> If you set the template up, share it with a client, and genuinely don't think it was worth it — email me and I'll refund you in full. No questions asked.
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- RELATED TEMPLATES -->
-{related.length > 0 && (
-  <div class="related-section">
-    <div class="related-inner">
-      <div class="related-title">You might also need</div>
-      <div class="related-grid">
-        {related.map(t => (
-          <a href={`/templates/${entrySlug(t)}`} class="related-card">
-            <div class="related-cover"></div>
-            <div class="related-body">
-              <div class="related-name">{t.data.title}</div>
-              <div class="related-price">€{t.data.price}</div>
-            </div>
-          </a>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
-
-<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <a href="/" class="footer-logo">Layer<span>Base</span></a>
     <ul class="footer-links">
       <li><a href="/templates">Templates</a></li>
       <li><a href="/blog">Blog</a></li>
-      <li><a href="/contact">Contact</a></li>
       <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
-    <p class="footer-copy">© 2026 NotionFlow</p>
+    <p class="footer-copy">© 2026 LayerBase</p>
   </div>
 </footer>
-
-<script>
-function switchTab(el: { classList: { add: (arg0: string) => void; }; }, id: string) {
-  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  ['overview','tasks','feedback'].forEach(tab => {
-    const el = document.getElementById('tab-' + tab);
-    if (el) el.style.display = tab === id ? 'block' : 'none';
-  });
-}
-</script>
 
 </body>
 </html>
