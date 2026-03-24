@@ -37,7 +37,7 @@ const categoryPath = (cat: string) => `/templates/category/${cat.toLowerCase()}`
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{title} — NotionFlow</title>
+  <title>{title} — LayerBase</title>
   <meta name="description" content={description}/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -135,7 +135,7 @@ const categoryPath = (cat: string) => `/templates/category/${cat.toLowerCase()}`
 <body>
 
 <nav>
-  <a href="/" class="nav-logo">Notion<span>Flow</span></a>
+  <a href="/" class="nav-logo">Layer<span>Base</span></a>
   <ul class="nav-links">
     <li><a href="/templates">Templates</a></li>
     {categories.filter(c => c !== 'All').map(cat => (
@@ -190,14 +190,14 @@ const categoryPath = (cat: string) => `/templates/category/${cat.toLowerCase()}`
 
 <footer>
   <div class="footer-inner">
-    <a href="/" class="footer-logo">Notion<span>Flow</span></a>
+    <a href="/" class="footer-logo">Layer<span>Base</span></a>
     <ul class="footer-links">
       <li><a href="/templates">Templates</a></li>
       <li><a href="/blog">Blog</a></li>
       <li><a href="/about">About</a></li>
       <li><a href="/contact">Contact</a></li>
     </ul>
-    <p class="footer-copy">© 2026 NotionFlow</p>
+    <p class="footer-copy">© 2026 LayerBase</p>
   </div>
 </footer>
 
