@@ -14,9 +14,9 @@ const sorted = templates.sort((a, b) =>
 const categories = ['All', ...Array.from(new Set(templates.map(t => t.data.category)))];
 
 const placeholders = [
-  { slug: 'client-portal',  title: 'Agency client portal',  desc: 'Replace onboarding chaos with a professional client workspace. Set up in 15 minutes.',  price: 49,  cat: 'Agency',      cover: 'purple' },
-  { slug: 'project-os',     title: 'Project OS',             desc: 'One Notion workspace to manage every active project, deadline, and deliverable.',         price: 39,  cat: 'Agency',      cover: 'teal'   },
-  { slug: 'client-crm',     title: 'Client CRM',             desc: 'Track every prospect and client relationship from first DM to signed contract.',          price: 29,  cat: 'Agency',      cover: 'amber'  },
+  { slug: 'client-portal',  title: 'Agency client portal',  desc: 'Replace onboarding chaos with a professional client workspace. Set up in 15 minutes.',  price: 49,  cat: 'Business',      cover: 'purple' },
+  { slug: 'project-os',     title: 'Project OS',             desc: 'One Notion workspace to manage every active project, deadline, and deliverable.',         price: 39,  cat: 'Business',      cover: 'teal'   },
+  { slug: 'client-crm',     title: 'Client CRM',             desc: 'Track every prospect and client relationship from first DM to signed contract.',          price: 29,  cat: 'Business',      cover: 'amber'  },
   { slug: 'invoice-tracker',title: 'Invoice tracker',         desc: 'Know exactly what has been sent, what is due, and what has been paid at all times.',      price: 29,  cat: 'Finance',     cover: 'teal'   },
   { slug: 'content-planner',title: 'Content planner',         desc: 'Plan, write, schedule, and repurpose every piece of content from one linked system.',     price: 29,  cat: 'Marketing',   cover: 'purple' },
   { slug: 'team-wiki',      title: 'Team wiki',               desc: 'A single source of truth for your SOPs, processes, and team knowledge.',                  price: 39,  cat: 'Operations',  cover: 'amber'  },
